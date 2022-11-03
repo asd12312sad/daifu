@@ -1,0 +1,49 @@
+html,
+body {
+  width: 100%;
+  min-width: 1220px;
+  height: 100%;
+  font: 14px/1.4em "微软雅黑", "Helvetica", "Hiragino Sans GB", "Microsoft YaHei", "sans-serif" !important;
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+table {
+  table-layout: fixed;
+}
+input,
+button {
+  outline: none;
+}
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+}
+textarea {
+  resize: none;
+}
+a,
+button {
+  cursor: pointer;
+}
+li {
+  list-style: none;
+}
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #0098f8;
+}
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: #0098f8;
+}
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: #0098f8;
+}
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: #0098f8;
+}
+/*# sourceMappingURL=reset.css.map */

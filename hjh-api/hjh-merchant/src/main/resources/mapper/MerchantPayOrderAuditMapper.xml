@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.merchant.mapper.MerchantPayOrderAuditMapper">
+
+    <select id="selectPageByBean" resultType="com.ms.merchant.domain.MerchantPayOrder">
+        select merchant_pay_order_audit.refuse_msg, merchant_pay_order_audit.id auditId,merchant_pay_order_audit.status auditStatus,merchant_pay_order.*  from merchant_pay_order_audit
+        left join merchant_pay_order on merchant_pay_order_audit.merchant_order_no = merchant_pay_order.merchant_order_no
+        where  merchant_pay_order_audit.merchant_id = #{merchantPayOrder.merchantId}
+        and    merchant_pay_order_audit.type = #{merchantPayOrder.type}
+        <if test="merchantPayOrder.haveUsdt != null"> and merchant_pay_order.have_usdt = #{merchantPayOrder.haveUsdt}</if>
+        <if test="merchantPayOrder.privateKey != null"> and merchant_pay_order.message != "SUCCESS" </if>
+        <if test="merchantPayOrder.message != null"> and merchant_pay_order.message = "SUCCESS" </if>
+        <if test="merchantPayOrder.startDate != null">
+            and merchant_pay_order_audit.create_time between #{merchantPayOrder.startDate} and #{merchantPayOrder.endDate}
+        </if>
+        <if test="merchantPayOrder.status != null"> and merchant_pay_order.status = #{merchantPayOrder.status}</if>
+        <if test="merchantPayOrder.auditStatus != null"> and merchant_pay_order_audit.status = #{merchantPayOrder.auditStatus}</if>
+        <if test="merchantPayOrder.address != null  and merchantPayOrder.address != ''"> and merchant_pay_order.address like concat("%", #{merchantPayOrder.address},"%")</if>
+        <if test="merchantPayOrder.returnAddress != null  and merchantPayOrder.returnAddress != ''"> and merchant_pay_order.return_address like concat("%", #{merchantPayOrder.returnAddress},"%")</if>
+        <if test="merchantPayOrder.merchantOrderNo != null  and merchantPayOrder.merchantOrderNo != ''"> and merchant_pay_order.merchant_order_no like concat("%",#{merchantPayOrder.merchantOrderNo},"%") </if>
+        <if test="merchantPayOrder.payAddress != null  and merchantPayOrder.ownerAddress != ''"> and merchant_pay_order.owner_address like concat("%", #{merchantPayOrder.ownerAddress},"%")</if>
+        order by merchant_pay_order_audit.create_time desc
+
+    </select>
+    <select id="selectCollectionPage" resultType="com.ms.merchant.domain.MerchantPayAddress">
+
+        select  merchant_pay_order_audit.refuse_msg, merchant_pay_order_audit.id auditId,merchant_pay_order_audit.status auditStatus, merchant_pay_address.*
+        from merchant_pay_order_audit
+        left join merchant_pay_address on merchant_pay_order_audit.merchant_order_no = merchant_pay_address.merchant_order_no
+
+        where  merchant_pay_order_audit.merchant_id = #{merchantPayAddress.merchantId}
+        and merchant_pay_order_audit.type = 3
+        <if test="merchantPayAddress.auditStatus != null"> and merchant_pay_order_audit.status = #{merchantPayAddress.auditStatus}</if>
+        <if test="merchantPayAddress.haveUsdt != null"> and merchant_pay_address.have_usdt = #{merchantPayAddress.haveUsdt}</if>
+        <if test="merchantPayAddress.privateKey != null"> and merchant_pay_address.message != "SUCCESS" </if>
+        <if test="merchantPayAddress.message != null"> and merchant_pay_address.message = "SUCCESS" </if>
+        <if test="merchantPayAddress.address != null  and merchantPayAddress.address != ''"> and merchant_pay_address.address like concat("%", #{merchantPayAddress.address},"%")</if>
+
+
+        <if test="merchantPayAddress.startDate != null">
+            and merchant_pay_address.create_time between #{merchantPayAddress.startDate} and #{merchantPayAddress.endDate}
+        </if>
+        <if test="merchantPayAddress.status != null"> and merchant_pay_address.status = #{merchantPayAddress.status}</if>
+
+
+        <if test="merchantPayAddress.returnAddress != null  and merchantPayAddress.returnAddress != ''"> and merchant_pay_address.return_address like  concat("%",  #{merchantPayAddress.returnAddress} ,"%")</if>
+        <if test="merchantPayAddress.merchantOrderNo != null  and merchantPayAddress.merchantOrderNo != ''"> and merchant_pay_address.merchant_order_no like  concat("%",  #{merchantPayAddress.merchantOrderNo} ,"%")</if>
+        ORDER BY merchant_pay_order_audit.create_time DESC
+    </select>
+</mapper>

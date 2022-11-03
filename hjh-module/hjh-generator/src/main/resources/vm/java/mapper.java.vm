@@ -1,0 +1,34 @@
+package ${packageName}.mapper;
+
+import ${packageName}.domain.${ClassName};
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import java.util.Map;
+
+/**
+ * ${functionName}Mapper接口
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+public interface ${ClassName}Mapper extends BaseMapper<${ClassName}>
+{
+
+/**
+ * 查询${functionName}列表
+ *
+ * @param ${className} ${functionName}
+ * @return ${functionName}集合
+ */
+public List<${ClassName}> select${ClassName}List(@Param("${className}")${ClassName} ${className}, @Param("params") Map<String, Object> params);
+
+
+    /**
+     * 查询${functionName}
+     *
+     * @param ${pkColumn.javaField} ${functionName}主键
+     * @return ${functionName}
+     */
+    public ${ClassName} select${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField});
+
+}

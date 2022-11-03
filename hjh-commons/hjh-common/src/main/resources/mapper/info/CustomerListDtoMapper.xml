@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.common.mapper.CustomerMapper">
+
+    <resultMap type="com.hjh.common.pojo.vo.CustomerListVo" id="CustomerListDtoResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="searchValue" column="search_value"/>
+        <result property="linkPhone" column="link_phone"/>
+        <result property="level" column="level"/>
+        <result property="customerAddress" column="customer_address"/>
+        <result property="status" column="status"/>
+        <result property="visitStatus" column="visit_status"/>
+        <result property="laseVisitTime" column="lase_visit_time"/>
+        <result property="assignTime" column="assign_time"/>
+        <result property="belongStaffName" column="belong_staff_name"/>
+        <result property="toShopStatus" column="to_shop_status"/>
+        <result property="toShopTime" column="to_shop_time"/>
+        <result property="appointmentTime" column="appointment_time"/>
+    </resultMap>
+
+    <sql id="selectCustomerListDtoVo">
+        select  id,belong_staff_name, name, sex, search_value, link_phone, level, customer_address, status, visit_status, lase_visit_time, assign_time from cms_customer
+    </sql>
+
+    <select id="selectCustomerListDtoList" resultMap="CustomerListDtoResult">
+        <include refid="selectCustomerListDtoVo"/>
+        where 1=1
+        <if test="userId!=null">
+            and belong_staff_id = #{userId}
+        </if>
+        <if test="customer.sex != null ">and sex = #{customer.sex}</if>
+        <if test="customer.searchValue != null  and customer.searchValue != ''">
+            and( link_phone like concat('%', #{customer.searchValue}, '%')
+            or name like concat('%', #{customer.searchValue}, '%')
+            or belong_staff_name like concat('%', #{customer.searchValue}, '%')
+            or customer_address like concat('%', #{customer.searchValue}, '%') )
+        </if>
+        <if test="customer.linkPhone != null  and customer.linkPhone != ''">and link_phone = #{customer.linkPhone}
+        </if>
+        <if test="customer.level != null ">and level = #{customer.level}</if>
+        <if test="customer.levelList != null and  customer.levelList.size() !=0">and
+
+        level in (
+         <foreach collection="customer.levelList " item="level" separator=",">
+         #{level}
+
+
+         </foreach>
+            )</if>
+
+
+
+        <if test="customer.customerAddress != null  and customer.customerAddress != ''">and customer_address =
+            #{customer.customerAddress}
+        </if>
+        <if test="customer.status != null ">and status = #{customer.status}</if>
+        <if test="customer.visitStatus != null ">and visit_status = #{customer.visitStatus}</if>
+        <if test="customer.laseVisitTimeStart != null and customer.laseVisitTimeStart != '' and customer.laseVisitTimeEnd != null and customer.laseVisitTimeEnd != ''">
+            and lase_visit_time between #{params.laseVisitTimeStart} and #{params.laseVisitTimeEnd}
+        </if>
+        <if test="customer.assignTimeStart != null and customer.assignTimeStart != '' and params.assignTimeEnd != null and params.assignTimeEnd != ''">
+            and assign_time between #{params.assignTimeStart} and #{params.assignTimeEnd}
+        </if>
+    </select>
+
+
+    <resultMap type="com.hjh.common.pojo.vo.CustomerVisitPage" id="CustomerVisitPageResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="linkPhone" column="link_phone"/>
+        <result property="level" column="level"/>
+        <result property="customerSoure" column="customer_soure"/>
+        <result property="actionType" column="action_type"/>
+        <result property="assignTime" column="assign_time"/>
+        <result property="processStatus" column="process_status"/>
+        <result property="customerJson" column="customer_json"/>
+        <result property="visitStatus" column="visit_status"/>
+        <result property="visitTime" column="visit_time"/>
+        <result property="belongStaffName" column="belong_staff_name"/>
+    </resultMap>
+
+    <sql id="selectCustomerVisitPageVo">
+     select
+    cms_customer.id,
+    cms_customer.name,
+    cms_customer.sex,
+    cms_customer.link_phone,
+    cms_customer.level,
+    cms_customer.customer_soure,
+    cms_customer.action_type,
+    cms_customer.assign_time,
+    cms_customer.process_status,
+    cms_customer_visit.visit_status,
+    cms_customer_visit.visit_time,
+    cms_customer_visit.customer_json,
+    cms_customer.belong_staff_name
+    from cms_customer_visit
+    left join cms_customer on cms_customer.id = cms_customer_visit.customer_id
+    </sql>
+
+    <select id="selectCustomerVisitPageList" parameterType="com.hjh.common.pojo.vo.CustomerVisitPage"
+            resultMap="CustomerVisitPageResult">
+        <include refid="selectCustomerVisitPageVo"/>
+        <where>
+            <if test="customerVisitPage.name != null  and customerVisitPage.name != ''">and cms_customer.name like
+                concat('%', #{customerVisitPage.name}, '%')
+            </if>
+            <if test="customerVisitPage.sex != null ">and cms_customer.sex = #{customerVisitPage.sex}</if>
+            <if test="customerVisitPage.linkPhone != null  and customerVisitPage.linkPhone != ''">and
+                cms_customer.link_phone = #{customerVisitPage.linkPhone}
+            </if>
+            <if test="customerVisitPage.level != null ">and cms_customer.level = #{customerVisitPage.level}</if>
+            <if test="customerVisitPage.levelList != null and customerVisitPage.levelList.size()!=0 ">and
+                level in (
+                <foreach collection="customerVisitPage.levelList " item="level" separator=",">
+                    #{level}
+                </foreach>
+                )
+            </if>
+
+            <if test="customerVisitPage.customerSoure != null ">and cms_customer.customer_soure =
+                #{customerVisitPage.customerSoure}
+            </if>
+            <if test="customerVisitPage.customerSoureList != null and customerVisitPage.customerSoureList.size()!=0">and
+                level in (
+                <foreach collection="customerVisitPage.customerSoureList " item="customerSoure" separator=",">
+                    #{customerSoure}
+                </foreach>
+                )
+            </if>
+            <if test="customerVisitPage.actionType != null  and customerVisitPage.actionType != ''">and
+                cms_customer.action_type = #{customerVisitPage.actionType}
+            </if>
+            <if test="customerVisitPage.assignTimeStart != null ">and cms_customer.assign_time
+                BETWEEN #{customerVisitPage.assignTimeStart} and #{customerVisitPage.assignTimeEnd}
+            </if>
+            <if test="customerVisitPage.processStatus != null ">and cms_customer.process_status =
+                #{customerVisitPage.processStatus}
+            </if>
+            <if test="customerVisitPage.visitStatus != null ">and cms_customer_visit.visit_status =
+                #{customerVisitPage.visitStatus}
+            </if>
+            <if test="customerVisitPage.visitTimeStart != null ">and cms_customer_visit.visit_time =
+                BETWEEN #{customerVisitPage.visitTimeStart} and #{customerVisitPage.visitTimeEnd}
+
+            </if>
+            <if test="customerVisitPage.belongStaffName != null  and customerVisitPage.belongStaffName != ''">and
+                cms_customer.belong_staff_name like concat('%', #{customerVisitPage.belongStaffName}, '%')
+            </if>
+            <if test="customerVisitPage.searchValue != null and customerVisitPage.searchValue != ''">
+                and ( cms_customer.name like
+                concat('%', #{customerVisitPage.searchValue}, '%')
+                or cms_customer.link_phone like
+                concat('%', #{customerVisitPage.searchValue}, '%')
+                or  cms_customer.action_type like
+                concat('%', #{customerVisitPage.searchValue}, '%')
+                or  cms_customer.belong_staff_name like concat('%', #{customerVisitPage.searchValue}, '%')
+                )
+            </if>
+        </where>
+        order by cms_customer_visit.create_time desc
+    </select>
+
+    <select id="distributionStatisticsList" resultType="java.util.HashMap">
+        select
+        user_id userId,
+        user_name userName,
+        sys_user.sex,
+        sys_dept.dept_name deptName,
+        (
+        select count(0) from cms_customer where cms_customer.belong_staff_id = sys_user.user_id
+        ) all_count
+        <foreach collection="list" item="dict" index="index">
+            ,
+            (
+            select count(0) from cms_customer where cms_customer.belong_staff_id = sys_user.user_id and
+            cms_customer.customer_soure = #{dict.dictValue}
+            <if test="dto.startDate != null">
+                and cms_customer.assign_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+            </if>
+            ) ${dict.dictLabel}
+
+        </foreach>
+        from sys_user
+        left join sys_dept on sys_user.dept_id = sys_dept.dept_id
+        where FIND_IN_SET( '113', sys_dept.ancestors) or sys_dept.dept_id = '113'
+
+        <if test="dto.userName != null  and dto.userName != ''">and
+            user_name like concat('%', #{dto.userName}, '%')
+        </if>
+        <if test="dto.deptName != null  and dto.deptName != ''">and
+            sys_dept.dept_name like concat('%', #{dto.deptName}, '%')
+        </if>
+        <if test="dto.sex != null  and dto.sex != ''">and
+            sys_user.sex = #{dto.sex}
+        </if>
+        <if test="dto.searchValue != null and dto.searchValue != ''">
+            and (
+            user_name like concat('%', #{dto.searchValue}, '%')
+            or sys_dept.dept_name like concat('%', #{dto.searchValue}, '%')
+            )
+        </if>
+        <if test="dto.deptId != null ">and sys_dept.dept_id = #{dto.deptId}</if>
+    </select>
+
+    <select id="selectStatistics" resultType="com.hjh.common.pojo.vo.StatisticsPageVo">
+        select
+        user_id,
+        user_name,
+        sys_user.sex,
+        sys_dept.dept_name,
+        ( SELECT count( 0 ) FROM cms_customer WHERE cms_customer.belong_staff_id = #{dto.userId}
+        ) allCount,
+        (
+        select count(0) from cms_customer where cms_customer.belong_staff_id = #{dto.userId}
+        <if test="dto.startDate != null">
+            and cms_customer.assign_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+        ) addCount,
+        0 recycleCount,
+        (
+        select count(0) from cms_customer where cms_customer.sign_status = 1
+        <if test="dto.startDate != null">
+            and cms_customer.to_shop_time
+            BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+        ) signCount
+        from sys_user
+        left join sys_dept on sys_user.dept_id = sys_dept.dept_id
+        where FIND_IN_SET( '113', sys_dept.ancestors) or sys_dept.dept_id = '113'
+
+        <if test="dto.userName != null  and dto.userName != ''">and
+            user_name like concat('%', #{dto.userName}, '%')
+        </if>
+        <if test="dto.deptName != null  and dto.deptName != ''">and
+            sys_dept.dept_name like concat('%', #{dto.deptName}, '%')
+        </if>
+        <if test="dto.sex != null  and dto.sex != ''">and
+            sys_user.sex = #{dto.sex}
+        </if>
+        <if test="dto.searchValue != null and dto.searchValue != ''">
+            and (
+            user_name like concat('%', #{dto.searchValue}, '%')
+            or sys_dept.dept_name like concat('%', #{dto.searchValue}, '%')
+            )
+        </if>
+        <if test="dto.deptId != null ">and sys_dept.dept_id = #{dto.deptId}</if>
+    </select>
+
+    <select id="visitStatisticsList" resultType="com.hjh.common.pojo.vo.VisitStatisticsPageVo">
+        select
+        user_id,
+        user_name,
+        sys_user.sex,
+        sys_dept.dept_name,
+        (
+        select count(0) from cms_customer_visit_plan where cms_customer_visit_plan.visit_user_id = sys_user.user_id
+        <if test="dto.startDate != null">
+            and
+            cms_customer_visit_plan.create_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+        ) visitCount,
+        (
+        select count(0) from cms_customer_visit_plan where cms_customer_visit_plan.visit_user_id = sys_user.user_id
+        <if test="dto.startDate != null">
+            and
+            cms_customer_visit_plan.create_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+        and
+        cms_customer_visit_plan.planned_visit_time &lt; cms_customer_visit_plan.visit_time
+        ) delayVisitCount,
+        (
+        select MAX( TimeStampDiff(SECOND,cms_customer_visit_plan.planned_visit_time, cms_customer_visit_plan.visit_time)
+        ) from
+        cms_customer_visit_plan where cms_customer_visit_plan.visit_user_id = sys_user.user_id
+        <if test="dto.startDate != null">
+            and cms_customer_visit_plan.create_time
+            BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+        and cms_customer_visit_plan.planned_visit_time &lt;
+        cms_customer_visit_plan.visit_time
+        ) maxDelayTime
+        from sys_user
+        left join sys_dept on sys_user.dept_id = sys_dept.dept_id
+        where FIND_IN_SET( '113', sys_dept.ancestors) or sys_dept.dept_id = '113'
+
+        <if test="dto.userName != null  and dto.userName != ''">and
+            user_name like concat('%', #{dto.userName}, '%')
+        </if>
+        <if test="dto.deptName != null  and dto.deptName != ''">and
+            sys_dept.dept_name like concat('%', #{dto.deptName}, '%')
+        </if>
+        <if test="dto.sex != null  and dto.sex != ''">and
+            sys_user.sex = #{dto.sex}
+        </if>
+        <if test="dto.deptId != null ">and sys_dept.dept_id = #{dto.deptId}</if>
+        <if test="dto.searchValue != null and dto.searchValue != ''">
+            and (
+            user_name like concat('%', #{dto.searchValue}, '%')
+            or sys_dept.dept_name like concat('%', #{dto.searchValue}, '%')
+            )
+        </if>
+    </select>
+
+    <select id="ringList" resultType="com.hjh.common.pojo.vo.RingStatisticsPageVo">
+        SELECT
+        user_id,
+        user_name,
+        sys_user.sex,
+        sys_dept.dept_name,
+        ( SELECT count( 0 ) FROM cms_customer WHERE cms_customer.belong_staff_id = sys_user.user_id
+        <if test="dto.sourceId != null and dto.sourceId != ''">
+            and cms_customer.customer_soure = #{dto.sourceId}
+        </if>
+        <if test="dto.startDate != null">
+            and
+            cms_customer.assign_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+        ) all_count,
+
+        ( SELECT count(0) FROM cms_customer WHERE
+        cms_customer.customer_intention_status = 1
+        <if test="dto.sourceId != null and dto.sourceId != ''">
+            and cms_customer.customer_soure = #{dto.sourceId}
+        </if>
+        <if test="dto.startDate != null">
+            and cms_customer.assign_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+        AND cms_customer.belong_staff_id = sys_user.user_id ) effective_count,
+
+        ( SELECT count(0) FROM cms_customer WHERE
+        cms_customer.invitation_status = 1
+        <if test="dto.sourceId != null and dto.sourceId != ''">
+            and cms_customer.customer_soure = #{dto.sourceId}
+        </if>
+        <if test="dto.startDate != null">
+
+            and cms_customer.invitation_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+            AND cms_customer.belong_staff_id = sys_user.user_id
+        </if>
+        )
+        invite_count,
+
+        ( SELECT count(0) FROM cms_customer
+        WHERE
+        cms_customer.to_shop_status =1
+        <if test="dto.sourceId != null and dto.sourceId != ''">
+            and cms_customer.customer_soure = #{dto.sourceId}
+        </if>
+        <if test="dto.startDate != null">
+            and cms_customer.to_shop_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+        AND cms_customer.belong_staff_id = sys_user.user_id ) to_shop_count
+        FROM
+        sys_user
+        LEFT JOIN sys_dept ON sys_user.dept_id = sys_dept.dept_id
+        where FIND_IN_SET( '113', sys_dept.ancestors) or sys_dept.dept_id = '113'
+
+        <if test="dto.searchValue != null and dto.searchValue != ''">
+            and (
+            user_name like concat('%', #{dto.searchValue}, '%')
+            or sys_dept.dept_name like concat('%', #{dto.searchValue}, '%')
+            )
+        </if>
+        <if test="dto.userName != null  and dto.userName != ''">and
+            user_name like concat('%', #{dto.userName}, '%')
+        </if>
+        <if test="dto.deptName != null  and dto.deptName != ''">and
+            sys_dept.dept_name like concat('%', #{dto.deptName}, '%')
+        </if>
+        <if test="dto.sex != null  and dto.sex != ''">and
+            sys_user.sex = #{dto.sex}
+        </if>
+        <if test="dto.deptId != null ">and sys_dept.dept_id = #{dto.deptId}</if>
+
+    </select>
+    <select id="selectAllToShopCount" resultType="java.lang.Integer">
+        SELECT count( 0 ) FROM cms_customer
+        <if test="dto.startDate != null">WHERE cms_customer.to_shop_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+
+    </select>
+    <select id="selectUserStatisticsInfo" resultType="com.hjh.common.pojo.vo.UserStatisticsHeaderVo">
+
+        select
+        (
+        select count(0) from cms_customer where cms_customer.belong_staff_id = #{dto.userId} and
+        cms_customer.invitation_time = 4
+        ) inviteAllCount,
+        ( SELECT count( 0 ) FROM cms_customer WHERE cms_customer.belong_staff_id = #{dto.userId}
+        <if test="dto.startDate != null">and cms_customer.assign_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}</if>
+        ) allCount,
+        (
+        select count(0) from cms_customer where cms_customer.belong_staff_id = #{dto.userId} and
+        cms_customer.invitation_status =1
+        <if test="dto.startDate != null">and cms_customer.invitation_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+        </if>
+        ) inviteCount,
+        (
+        select count(0) from cms_customer where cms_customer.belong_staff_id = #{dto.userId} and
+        cms_customer.to_shop_status = 1
+        <if test="dto.startDate != null">and cms_customer.to_shop_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}</if>
+        ) toShopCount,
+        (
+        select count(0) from cms_customer where cms_customer.belong_staff_id = #{dto.userId} and
+        cms_customer.to_shop_status = 1 ) toShopAllCount,
+        (
+        select count(0) from cms_customer where cms_customer.belong_staff_id = #{dto.userId} and
+        cms_customer.customer_intention_status = 1
+        <if test="dto.startDate != null">and cms_customer.to_shop_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}</if>
+        ) effectiveCount,
+        (
+        select count(0) from cms_customer where cms_customer.belong_staff_id = #{dto.userId} and
+        cms_customer.customer_intention_status = 13
+        ) effectiveAllCount
+    </select>
+    <select id="selectUserStatisticsList" resultType="com.hjh.common.pojo.vo.UserStatisticsPageVo">
+
+        select
+        media_channel.channel_code sourceId,
+        media_channel.channel_name sourceName,
+        ( SELECT count( 0 ) FROM cms_customer WHERE cms_customer.belong_staff_id =#{dto.userId}    <if
+            test="dto.startDate != null">and cms_customer.assign_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}
+    </if> ) all_count,
+        ( SELECT count( 0) FROM cms_customer WHERE cms_customer.customer_intention_status = 1 and belong_staff_id
+        =#{dto.userId} and customer_soure = media_channel.channel_code  <if test="dto.startDate != null">and
+        cms_customer.create_time BETWEEN #{dto.startDate} and #{serviceUser.endDate}</if>) effective_count,
+        ( SELECT count(0) FROM cms_customer WHERE cms_customer.invitation_status = 1 and belong_staff_id =#{dto.userId}
+        and customer_soure = media_channel.channel_code   <if test="dto.startDate != null">and cms_customer.create_time
+        BETWEEN #{dto.startDate} and #{serviceUser.endDate}</if>) invite_count,
+        ( SELECT count(0) FROM cms_customer WHERE cms_customer.to_shop_status = 1 and belong_staff_id =#{dto.userId} and
+        customer_soure = media_channel.channel_code  <if test="dto.startDate != null">and cms_customer.create_time
+        BETWEEN
+        #{dto.startDate} and #{serviceUser.endDate}
+    </if> ) to_shop_count,
+        ( SELECT count(0) FROM cms_customer WHERE cms_customer.sign_status = 1 and belong_staff_id =#{dto.userId} and
+        customer_soure = media_channel.channel_code   <if test="dto.startDate != null">and cms_customer.create_time
+        BETWEEN
+        #{dto.startDate} and #{serviceUser.endDate}
+    </if> ) signCount
+        from media_channel
+        where media_channel.status_code = '1'
+    </select>
+
+    <select id="selectVxToDoList" resultMap="CustomerListDtoResult">
+        <include refid="selectCustomerListDtoVo"/>
+        where id in (
+        select customer_id from cms_customer_visit_plan where status = 0
+        and visit_user_id = #{userId}
+        )
+    </select>
+
+</mapper>

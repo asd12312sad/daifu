@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.WithdrawAuditMapper">
+
+    <resultMap type="com.hjh.erp.domain.WithdrawAudit" id="WithdrawAuditResult">
+        <result property="id"    column="id"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="address"    column="address"    />
+        <result property="tradeType"    column="trade_type"    />
+        <result property="status"    column="status"    />
+        <result property="userId"    column="user_id"    />
+        <result property="amount"    column="amount"    />
+        <result property="userName"    column="user_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectWithdrawAuditVo">
+        select id, create_date, address, tx_id, trade_id, trade_type, status, pay_address, user_id, amount, user_name, remark, del_flag, type from withdraw_audit
+    </sql>
+
+    <select id="selectWithdrawAuditById" parameterType="Long" resultMap="WithdrawAuditResult">
+                    <include refid="selectWithdrawAuditVo"/>
+            where id = #{id}
+            </select>
+
+    <select id="selectWithdrawAuditList" parameterType="com.hjh.erp.domain.WithdrawAudit" resultMap="WithdrawAuditResult">
+        <include refid="selectWithdrawAuditVo"/>
+        <where>
+            <if test="withdrawAudit.address != null  and withdrawAudit.address != ''"> and address = #{withdrawAudit.address}</if>
+            <if test="withdrawAudit.status != null "> and status = #{withdrawAudit.status}</if>
+            <if test="withdrawAudit.userId != null "> and user_id = #{withdrawAudit.userId}</if>
+            <if test="withdrawAudit.amount != null "> and amount = #{withdrawAudit.amount}</if>
+            <if test="withdrawAudit.userName != null  and withdrawAudit.userName != ''"> and user_name like concat('%', #{withdrawAudit.userName}, '%')</if>
+            <if test="withdrawAudit.remark != null  and withdrawAudit.remark != ''"> and remark = #{withdrawAudit.remark}</if>
+        </where>
+    </select>
+
+</mapper>

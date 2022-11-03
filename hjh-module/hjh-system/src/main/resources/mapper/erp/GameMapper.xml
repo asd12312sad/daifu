@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.GameMapper">
+
+    <resultMap type="com.hjh.erp.domain.Game" id="GameResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="address"    column="address"    />
+        <result property="udunKey"    column="udun_key"    />
+        <result property="minAmount"    column="min_amount"    />
+        <result property="maxAmount"    column="max_amount"    />
+        <result property="sort"    column="sort"    />
+        <result property="status"    column="status"    />
+        <result property="odds"   column="odds"    />
+        <result property="profitFee"   column="profit_fee"    />
+        <result property="violationFee"   column="violation_fee"    />
+        <result property="oddsIdle"   column="odds_idle"    />
+        <result property="oddsSum"   column="odds_sum"    />
+    </resultMap>
+
+    <sql id="selectGameVo">
+        select * from game
+    </sql>
+
+    <select id="selectGameById" parameterType="Long" resultMap="GameResult">
+                    <include refid="selectGameVo"/>
+            where id = #{id}
+            </select>
+
+    <select id="selectGameList" parameterType="com.hjh.erp.domain.Game" resultMap="GameResult">
+        <include refid="selectGameVo"/>
+        <where>
+            <if test="game.name != null  and game.name != ''"> and name like concat('%', #{game.name}, '%')</if>
+            <if test="game.address != null  and game.address != ''"> and address = #{game.address}</if>
+            <if test="game.udunKey != null  and game.udunKey != ''"> and udun_key = #{game.udunKey}</if>
+            <if test="game.minAmount != null "> and min_amount = #{game.minAmount}</if>
+            <if test="game.maxAmount != null "> and max_amount = #{game.maxAmount}</if>
+            <if test="game.sort != null "> and sort = #{game.sort}</if>
+            <if test="game.status != null "> and status = #{game.status}</if>
+        </where>
+        order by id desc
+    </select>
+
+</mapper>

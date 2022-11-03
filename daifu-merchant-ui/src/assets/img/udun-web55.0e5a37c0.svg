@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>udun-web55</title>
+    <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(-34.000000, -128.000000)">
+            <rect fill="transparent" x="0" y="0" width="1440" height="1024"></rect>
+            <g id="udun-web55" transform="translate(34.000000, 128.000000)">
+                <rect id="container" x="0" y="0" width="20" height="20"></rect>
+                <path
+                    d="M15.625,8.125 L13.75,8.125 L13.75,5 C13.75,2.92893219 12.0710678,1.25 10,1.25 C7.92893219,1.25 6.25,2.92893219 6.25,5 L6.25,8.125 L4.375,8.125 C3.68464406,8.125 3.125,8.68464406 3.125,9.375 L3.125,17.5 C3.125,18.1903559 3.68464406,18.75 4.375,18.75 L15.625,18.75 C16.3153559,18.75 16.875,18.1903559 16.875,17.5 L16.875,9.375 C16.875,8.68464406 16.3153559,8.125 15.625,8.125 Z M7.5,5 C7.5,3.61928813 8.61928813,2.5 10,2.5 C11.3807119,2.5 12.5,3.61928813 12.5,5 L12.5,8.125 L7.5,8.125 L7.5,5 Z"
+                    id="locked" fill="#05AA69" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>

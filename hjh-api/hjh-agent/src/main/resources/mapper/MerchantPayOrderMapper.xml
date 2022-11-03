@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.agent.mapper.MerchantPayOrderMapper">
+
+    <select id="selectOrder" resultType="com.ms.agent.domain.MerchantPayOrder">
+        select merchant_pay_order.*,merchant.name merchantName,merchant.account merchantAccount from merchant_pay_order
+        left join merchant on merchant.id = merchant_pay_order.merchant_id
+        where  merchant.agent_id = #{merchantPayOrder.agentId}
+        <if test="merchantPayOrder.merchantId != null  and merchantPayOrder.merchantId != ''">
+            and   merchant_pay_order.merchant_id = #{merchantPayOrder.merchantId}
+        </if>
+        <if test="merchantPayOrder.privateKey != null"> and merchant_pay_order.message != "SUCCESS" </if>
+        <if test="merchantPayOrder.message != null"> and merchant_pay_order.message = "SUCCESS" </if>
+
+        <if test="merchantPayOrder.startDate != null">
+         and merchant_pay_order.create_time between #{merchantPayOrder.startDate} and #{merchantPayOrder.endDate}
+          </if>
+
+        <if test="merchantPayOrder.status != null"> and merchant_pay_order.status = #{merchantPayOrder.status}</if>
+
+        <if test="merchantPayOrder.address != null  and merchantPayOrder.address != ''"> and merchant_pay_order.address like concat("%", #{merchantPayOrder.address},"%")</if>
+        <if test="merchantPayOrder.returnAddress != null  and merchantPayOrder.returnAddress != ''"> and merchant_pay_order.return_address like concat("%", #{merchantPayOrder.returnAddress},"%")</if>
+        <if test="merchantPayOrder.merchantOrderNo != null  and merchantPayOrder.merchantOrderNo != ''"> and merchant_pay_order.merchant_order_no like concat("%",#{merchantPayOrder.merchantOrderNo},"%") </if>
+        <if test="merchantPayOrder.haveUsdt != null "> and merchant_pay_order.have_usdt = #{merchantPayOrder.haveUsdt}</if>
+        <if test="merchantPayOrder.payAddress != null  and merchantPayOrder.ownerAddress != ''"> and merchant_pay_order.owner_address like concat("%", #{merchantPayOrder.ownerAddress},"%")</if>
+        order by  merchant_pay_order.create_time desc
+
+    </select>
+
+
+    <select id="selectOrderExport" resultType="com.ms.agent.domain.MerchantPayOrder">
+        select merchant_pay_order.*,merchant.name merchantName,merchant.account merchantAccount from merchant_pay_order
+        left join merchant on merchant.id = merchant_pay_order.merchant_id
+        where  merchant.agent_id = #{merchantPayOrder.agentId}
+        <if test="merchantPayOrder.merchantId != null  and merchantPayOrder.merchantId != ''">
+            and   merchant_pay_order.merchant_id = #{merchantPayOrder.merchantId}
+        </if>
+        <if test="merchantPayOrder.privateKey != null"> and merchant_pay_order.message != "SUCCESS" </if>
+        <if test="merchantPayOrder.message != null"> and merchant_pay_order.message = "SUCCESS" </if>
+
+        <if test="merchantPayOrder.startDate != null">
+            and merchant_pay_order.create_time between #{merchantPayOrder.startDate} and #{merchantPayOrder.endDate}
+        </if>
+
+        <if test="merchantPayOrder.status != null"> and merchant_pay_order.status = #{merchantPayOrder.status}</if>
+
+        <if test="merchantPayOrder.address != null  and merchantPayOrder.address != ''"> and merchant_pay_order.address like concat("%", #{merchantPayOrder.address},"%")</if>
+        <if test="merchantPayOrder.returnAddress != null  and merchantPayOrder.returnAddress != ''"> and merchant_pay_order.return_address like concat("%", #{merchantPayOrder.returnAddress},"%")</if>
+        <if test="merchantPayOrder.merchantOrderNo != null  and merchantPayOrder.merchantOrderNo != ''"> and merchant_pay_order.merchant_order_no like concat("%",#{merchantPayOrder.merchantOrderNo},"%") </if>
+        <if test="merchantPayOrder.haveUsdt != null "> and merchant_pay_order.have_usdt = #{merchantPayOrder.haveUsdt}</if>
+        <if test="merchantPayOrder.payAddress != null  and merchantPayOrder.ownerAddress != ''"> and merchant_pay_order.owner_address like concat("%", #{merchantPayOrder.ownerAddress},"%")</if>
+        order by  merchant_pay_order.create_time desc
+
+
+    </select>
+
+    <select id="selectHomeCollectCount" resultType="com.ms.agent.pojo.vo.HomeCountVO">
+        SELECT
+            count(0) collectCount,
+            count(IF(have_usdt=1, true, null))  collectEndCount,
+            sum(merchant_pay_address.order_amount)  allCollectSumAmount,
+
+            sum(IF(have_usdt=1, merchant_pay_address.received_amount, 0))  collectSumAmount,
+            count(IF(message='SUCCESS', true, null))  collectReturnCount
+        from merchant_pay_address
+        where agent_id  = #{agentId}
+--           今天
+          and TO_DAYS(merchant_pay_address.create_time ) = TO_DAYS(NOW())
+
+    </select>
+    <select id="selectHomePayCount" resultType="com.ms.agent.pojo.vo.HomeCountVO">
+
+        SELECT
+            count(0) payCount,
+            sum(merchant_pay_order.usdt_balance)  allPaySumAmount,
+
+            count(IF(have_usdt=1, true, null))  payEndCount,
+            sum(IF(have_usdt=1, merchant_pay_order.usdt_balance, 0))  paySumAmount,
+            count(IF(message='SUCCESS', true, null))  payReturnCount
+        from merchant_pay_order
+        where agent_id  = #{agentId}
+          and TO_DAYS(merchant_pay_order.create_time ) = TO_DAYS(NOW())
+
+
+    </select>
+    <select id="selectHomeCountPay" resultType="com.ms.agent.pojo.vo.HomeCountVO">
+
+        SELECT
+            count(0) payCount,
+
+            count(IF(have_usdt=1, true, null))  payEndCount,
+            sum(IF(have_usdt=1, merchant_pay_order.usdt_balance, 0))  paySumAmount,
+            count(IF(message='SUCCESS', true, null))  payReturnCount
+        from merchant_pay_order
+        where  create_time like concat(#{date},"%")
+        and agent_id  = #{agentId}
+
+    </select>
+
+    <select id="selectHomeCountCollect" resultType="com.ms.agent.pojo.vo.HomeCountVO">
+
+        SELECT
+            count(0) collectCount,
+            count(IF(have_usdt=1, true, null))  collectEndCount,
+            sum(IF(have_usdt=1, merchant_pay_address.usdt_balance, 0))  collectSumAmount,
+            count(IF(message='SUCCESS', true, null))  collectReturnCount
+        from merchant_pay_address
+        where  create_time like concat(#{date},"%")
+          and agent_id  = #{agentId}
+
+    </select>
+
+    <select id="collectionTodayHeader" resultType="com.ms.agent.pojo.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(merchant_pay_address.order_amount),0) askSuccessAmount,
+            IFNULL(sum(
+
+                           IFNULL(merchant_pay_address.received_amount,0)
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+                           IFNULL(merchant_pay_address.fee_amount,0)
+
+                       ),0) feeAmount,
+            count(0) orderCount,
+            IFNULL(count(merchant_pay_address.received_amount),0) paySuccessCount
+
+        from merchant_pay_address
+        where merchant_pay_address.agent_id = #{agentId}
+          and TO_DAYS(merchant_pay_address.create_time ) = TO_DAYS(NOW())
+
+    </select>
+    <select id="collectionHeader" resultType="com.ms.agent.pojo.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(merchant_pay_address.order_amount),0) askSuccessAmount,
+            IFNULL(sum(
+
+                           IFNULL(merchant_pay_address.received_amount,0)
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+                           IFNULL(merchant_pay_address.fee_amount,0)
+
+                       ),0) feeAmount,
+            count(0) orderCount,
+            IFNULL(count(merchant_pay_address.received_amount),0) paySuccessCount
+
+        from merchant_pay_address
+        where merchant_pay_address.agent_id = #{agentId}
+
+    </select>
+    <select id="payTodayHeader" resultType="com.ms.agent.pojo.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(merchant_pay_order.usdt_balance),0) askSuccessAmount,
+            IFNULL(sum(
+
+                           If(merchant_pay_order.have_usdt=1,merchant_pay_order.usdt_balance,0)
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+                           If(merchant_pay_order.fee_amount!=null,merchant_pay_order.fee_amount,0)
+                       ),0)
+
+                                                           feeAmount,
+            count(0) orderCount,
+            IFNULL(sum(If(merchant_pay_order.have_usdt=1,1,0) ),0) paySuccessCount
+
+        from merchant_pay_order
+        where merchant_pay_order.agent_id = #{agentId}
+          and TO_DAYS(merchant_pay_order.create_time ) = TO_DAYS(NOW())
+
+
+    </select>
+    <select id="payHeader" resultType="com.ms.agent.pojo.vo.OrderHeaderVo">
+
+        select
+            IFNULL(sum(merchant_pay_order.usdt_balance),0) askSuccessAmount,
+            IFNULL(sum(
+
+                           If(merchant_pay_order.have_usdt=1,merchant_pay_order.usdt_balance,0)
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+                           If(merchant_pay_order.fee_amount!=null,merchant_pay_order.fee_amount,0)
+                       ),0)
+
+                                                           feeAmount,
+            count(0) orderCount,
+            IFNULL(sum(If(merchant_pay_order.have_usdt=1,1,0) ),0) paySuccessCount
+
+        from merchant_pay_order
+        where merchant_pay_order.agent_id = #{agentId}
+
+    </select>
+    <select id="passageHeader" resultType="com.ms.agent.pojo.vo.OrderHeaderVo">
+
+        select
+            IFNULL(sum(
+                           usdt_balance
+                       ),0) paySuccessAmount,
+
+            count(0) orderCount
+        from merchant_pay_order
+        where merchant_pay_order.agent_id = #{agentId}
+        and merchant_pay_order.status = 1
+    </select>
+    <select id="successHeader" resultType="com.ms.agent.pojo.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(
+
+                           usdt_balance
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+
+                           fee_amount
+                       ),0) feeAmount,
+
+            count(0) orderCount
+
+        from merchant_pay_order
+        where merchant_pay_order.agent_id = #{agentId}
+          and merchant_pay_order.status = 2
+
+    </select>
+    <select id="failHeader" resultType="com.ms.agent.pojo.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(
+                           usdt_balance
+                       ),0) paySuccessAmount,
+            count(0) orderCount
+
+        from merchant_pay_order
+        where merchant_pay_order.agent_id = #{agentId}
+          and merchant_pay_order.status = 0
+    </select>
+    <select id="financeList" resultType="com.ms.agent.pojo.vo.FinanceListVo">
+
+        select * from (select
+                           merchant.name merchantName,
+                           "代收" serviceName,
+                           merchant_pay_address.received_amount amount,
+                           merchant_pay_address.agent_fee agentAmount,
+                           merchant_pay_address.fee_amount merchantAmount,
+                           merchant_pay_address.create_time createTime
+
+                       from merchant_pay_address
+
+                                left join merchant on merchant.id = merchant_pay_address.merchant_id
+                       where merchant.agent_id = #{financeListVo.agentId}
+                       and merchant_pay_address.status in (1,5)
+                        <if test="financeListVo.merchantId != null">
+                            and merchant.id = #{financeListVo.merchantId}
+                        </if>
+
+
+                       UNION all
+
+                       select
+                           merchant.name merchantName,
+                           "代付" serviceName,
+                           merchant_pay_order.usdt_balance amount,
+                           merchant_pay_order.agent_fee agentAmount,
+                           merchant_pay_order.fee_amount merchantAmount,
+                           merchant_pay_order.create_time createTime
+
+                       from merchant_pay_order
+                                left join merchant on merchant.id = merchant_pay_order.merchant_id
+                       where merchant.agent_id = #{financeListVo.agentId}
+                         and merchant_pay_order.status in (2)
+                       <if test="financeListVo.merchantId != null">
+                           and merchant.id = #{financeListVo.merchantId}
+                       </if>
+                      ) orders
+
+        where 1=1
+        <if test="financeListVo.serviceName != null and financeListVo.serviceName !=''">
+            and serviceName = #{financeListVo.serviceName}
+        </if>
+
+
+        <if test="financeListVo.startDate != null">
+            and createTime between #{financeListVo.startDate} and #{financeListVo.endDate}
+        </if>
+
+        <if test="financeListVo.sortColumn != null  and financeListVo.sortColumn != '' ">
+            <if test='financeListVo.sortColumn == "amount".toString() '>
+                ORDER BY amount ${financeListVo.sort}
+            </if>
+            <if test='financeListVo.sortColumn == "agentAmount".toString() '>
+                ORDER BY agentAmount ${financeListVo.sort}
+            </if>
+            <if test='financeListVo.sortColumn == "merchantAmount".toString() '>
+                ORDER BY merchantAmount ${financeListVo.sort}
+            </if>
+        </if>
+        <if test='financeListVo.sortColumn == null  or financeListVo.sortColumn == "".toString()'>
+            order by  createTime desc
+        </if>
+    </select>
+
+    <select id="financeExpoit" resultType="com.ms.agent.pojo.vo.FinanceListVo">
+
+        select * from (select
+        merchant.name merchantName,
+        "代收" serviceName,
+        merchant_pay_address.received_amount amount,
+        merchant_pay_address.agent_fee agentAmount,
+        merchant_pay_address.fee_amount merchantAmount,
+        merchant_pay_address.create_time createTime
+
+        from merchant_pay_address
+
+        left join merchant on merchant.id = merchant_pay_address.merchant_id
+        where merchant.agent_id = #{financeListVo.agentId}
+        and merchant_pay_address.status in (1,5)
+        <if test="financeListVo.merchantId != null">
+            and merchant.id = #{financeListVo.merchantId}
+        </if>
+
+
+        UNION all
+
+        select
+        merchant.name merchantName,
+        "代付" serviceName,
+        merchant_pay_order.usdt_balance amount,
+        merchant_pay_order.agent_fee agentAmount,
+        merchant_pay_order.fee_amount merchantAmount,
+        merchant_pay_order.create_time createTime
+
+        from merchant_pay_order
+        left join merchant on merchant.id = merchant_pay_order.merchant_id
+        where merchant.agent_id = #{financeListVo.agentId}
+        and merchant_pay_order.status in (2)
+
+        <if test="financeListVo.merchantId != null">
+            and merchant.id = #{financeListVo.merchantId}
+        </if>
+        ) orders
+
+        where 1=1
+        <if test="financeListVo.serviceName != null and financeListVo.serviceName !=''">
+            and serviceName = #{financeListVo.serviceName}
+        </if>
+
+        <if test="financeListVo.startDate != null">
+            and createTime between #{financeListVo.startDate} and #{financeListVo.endDate}
+        </if>
+
+        <if test="financeListVo.sortColumn != null  and financeListVo.sortColumn != '' ">
+            <if test='financeListVo.sortColumn == "amount".toString() '>
+                ORDER BY amount ${financeListVo.sort}
+            </if>
+            <if test='financeListVo.sortColumn == "agentAmount".toString() '>
+                ORDER BY agentAmount ${financeListVo.sort}
+            </if>
+            <if test='financeListVo.sortColumn == "merchantAmount".toString() '>
+                ORDER BY merchantAmount ${financeListVo.sort}
+            </if>
+        </if>
+        <if test='financeListVo.sortColumn == null  or financeListVo.sortColumn == "".toString()'>
+            order by  createTime desc
+        </if>
+    </select>
+    <select id="financeInfo" resultType="com.ms.agent.pojo.vo.SysSettingVO">
+
+
+        select  ifnull((
+
+                           select sum(fee_amount - agent_fee ) from merchant_pay_address where agent_id = agent.id
+                                                                                           and merchant_pay_address.status in (1,5)
+
+                       ),0) collectAmount,
+
+                ifnull(  (
+
+                             select sum(fee_amount - agent_fee ) from merchant_pay_order where agent_id = agent.id
+                                                                                           and merchant_pay_order.status in (2)
+
+
+                         ),0) payAmount,
+                agent.usdt_address,
+                agent.withdraw_amount,
+                ( ifnull((
+                             select sum(fee_amount - agent_fee ) from merchant_pay_address where agent_id = agent.id
+                                                                                             and merchant_pay_address.status in (1,5)
+
+
+                         ),0)+
+                  ifnull((
+
+                             select sum(fee_amount - agent_fee ) from merchant_pay_order where agent_id = agent.id
+                                                                                           and merchant_pay_order.status in (2)
+
+
+                         ),0)- ifnull(agent.withdraw_amount,0)
+                    ) outstandingAmount,
+
+                (
+
+                        ifnull((
+                                   select sum(fee_amount - agent_fee ) from merchant_pay_address where agent_id = agent.id
+                                                                                                   and merchant_pay_address.status in (1,5)
+
+
+                               ),0)+
+                        ifnull((
+
+                                   select sum(fee_amount - agent_fee ) from merchant_pay_order where agent_id = agent.id
+                                                                                                 and merchant_pay_order.status in (2)
+
+
+                               ),0)
+
+                    ) profitAmount
+        from agent
+        where agent.id = #{agentId}
+
+
+
+    </select>
+
+</mapper>

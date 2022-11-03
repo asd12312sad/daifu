@@ -1,0 +1,47 @@
+// 系统的一些基本样式
+
+body {
+  width: 100%;
+  height: 100%;
+  font: 1rem "微软雅黑","Helvetica","Hiragino Sans GB","Microsoft YaHei","sans-serif" !important;
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+table {
+  table-layout: fixed;
+}
+input, button {
+  outline: none;
+}
+input:-webkit-autofill {
+  -webkit-box-shadow:0 0 0 1000px transparent inset;
+}
+textarea {
+  resize: none;
+}
+a {
+  text-decoration: none;
+  outline: none;
+}
+a, button {
+  cursor: pointer;
+}
+li {
+  list-style: none;
+}
+@placeholder-color: #0098f8;
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+  color: @placeholder-color;
+}
+input:-moz-placeholder, textarea:-moz-placeholder  {
+  color: @placeholder-color;
+}
+input::-moz-placeholder, textarea::-moz-placeholder  {
+  color: @placeholder-color;
+}
+input:-ms-input-placeholder, textarea:-ms-input-placeholder  {
+  color: @placeholder-color;
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.MerchantMapper">
+
+    <resultMap type="com.hjh.erp.domain.Merchant" id="MerchantResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="balance"    column="balance"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="fee"    column="fee"    />
+        <result property="trxAddress"    column="trx_address"    />
+        <result property="usdtAddress"    column="usdt_address"    />
+
+        <result property="usdtPayAddress"    column="usdt_pay_address"    />
+        <result property="usdtPayPrivateKey"    column="usdt_pay_private_key"    />
+        <result property="trialQuota" column="trial_quota"/>
+
+        <result property="sign"    column="sign"    />
+
+    </resultMap>
+
+    <sql id="selectMerchantVo">
+        select merchant.*,agent.name agentName from merchant
+
+        left join agent on agent.id = merchant.agent_id
+    </sql>
+
+    <select id="selectMerchantById" parameterType="Long" resultMap="MerchantResult">
+            <include refid="selectMerchantVo"/>
+            where id = #{id}
+    </select>
+
+    <select id="selectMerchantList" parameterType="com.hjh.erp.domain.Merchant" resultMap="MerchantResult">
+        select merchant.* , agent.name agentName  from merchant
+        left join agent on agent.id = merchant.agent_id
+        <where>
+            <if test="merchant.name != null  and merchant.name != ''"> and merchant.name like concat('%', #{merchant.name}, '%')</if>
+        </where>
+        order by merchant.create_time desc
+
+    </select>
+
+</mapper>

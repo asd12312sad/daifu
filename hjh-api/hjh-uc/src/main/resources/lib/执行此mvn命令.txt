@@ -1,0 +1,6 @@
+ mvn install:install-file -Dfile=tron-protobuf-1.0-SNAPSHOT.jar -DgroupId=com.github.tronprotocol -DartifactId=ron-protobuf  -Dversion=1.0 -Dpackaging=jar
+
+
+  mvn install:install-file -Dfile=tron-wallet-cli.jar -DgroupId=com.github.tronprotocol -DartifactId=tron-wallet-cli  -Dversion=1.2.0 -Dpackaging=jar
+
+mvn install:install-file -Dfile=wallet-cli-4.4.1.jar -DgroupId=com.github.tronprotocol -DartifactId=tron-wallet-cli  -Dversion=4.4.1 -Dpackaging=jar

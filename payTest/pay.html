@@ -1,0 +1,225 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cashier</title>
+    <link href="./css/chunk-libs.ee57d822.css" rel="stylesheet">
+    <link href="./css/app.320d4f81.css" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="16x16" href="./img/icons/favicon-16x16.png">
+    <link rel="stylesheet" type="text/css" href="./css/dashboard.0c1a8abb.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+
+<body>
+    <div id="app">
+        <div data-v-4d54c0a8="" class="app-wrapper hideSidebar withoutAnimation mobile">
+            <div data-v-4d54c0a8="" class="main-container">
+                <div data-v-1e370caf="" data-v-4d54c0a8="" class="navbar">
+                    <span data-v-1e370caf="" class="title" style="margin-right: 0px;">Cashier</span>
+                </div>
+                <section data-v-1eb94f2e="" data-v-4d54c0a8="" class="app-main">
+                    <div data-v-192d09bc="" data-v-1eb94f2e="" class="app-container">
+                        <div data-v-192d09bc="" class="qr">
+                            <div data-v-192d09bc="" class="info">
+                                <form data-v-192d09bc="" class="el-form el-form--label-left el-form--inline">
+                                    <div data-v-192d09bc="" class="el-form-item el-form-item--samll"
+                                        style="margin-right: 2em;">
+                                        <div class="el-form-item__label-wrap" style="margin-left: 8px;"><label
+                                                class="el-form-item__label" style="width: auto;">Amount：</label></div>
+                                        <div class="el-form-item__content">
+                                            <div data-v-192d09bc="" class="text"> USDT 1.000000 </div>
+
+                                        </div>
+                                    </div>
+                                    <div data-v-192d09bc="" class="el-form-item el-form-item--samll">
+                                        <div class="el-form-item__label-wrap"><label class="el-form-item__label"
+                                                style="width: auto;">Order No：</label></div>
+                                        <div class="el-form-item__content">
+                                            <div data-v-192d09bc="" class="text">UT16541646019TSGU</div>
+
+                                        </div>
+                                    </div>
+                                </form>
+                                <div data-v-192d09bc="" class="el-divider el-divider--horizontal">
+
+                                </div>
+                                <div data-v-192d09bc="" class="tips_info">
+                                    <div data-v-192d09bc="" class="grend"> Order QR code has been generated.You can now
+                                        scan a QR code to pay. </div>
+                                    <div data-v-192d09bc="" class="tips">Warning: each QR code can only be paid once,
+                                        the second time cannot be received.</div>
+                                </div>
+                                <div data-v-192d09bc="" class="qr" style="margin-top:30px;">
+                                    <div style="width:200px;height:200px;position: relative;">
+                                        <div class="qrcode" id="qrcode"></div>
+                                        <div v-if="isshow == 200" style="display: flex;flex-direction: column;align-items: center;justify-content: center;position:absolute;width:200px;height:200px;background: rgba(0, 0, 0, .8);top:0;">
+                                            <img src="./img/cg.png" alt="" style="width:50px;height:50px;">
+                                            <p style="color:#fff;margin-top: 10px;">付款成功</p>
+                                            <p style="color:#fff;margin-top: 10px;">{{money}}</p>
+                                        </div>
+                                        <div v-if="isshow == 500" style="display: flex;flex-direction: column;align-items: center;justify-content: center;position:absolute;width:200px;height:200px;background: rgba(0, 0, 0, .8);top:0;">
+                                            <img src="./img/sb.png" alt="" style="width:50px;height:50px;">
+                                            <p style="color:#fff;margin-top: 10px;">付款失败</p>
+                                        </div>
+                                    </div>
+
+                                    <div data-v-192d09bc="">
+                                        <div data-v-192d09bc="" class="qrcodeText" style="text-align: center;">
+                                            {{address}}</div>
+                                        <div data-v-192d09bc="" style="text-align: center; margin-top: 10px;"><button
+                                                data-v-192d09bc="" v-clipboard:copy="address"
+                                                v-clipboard:success="onCopy" v-clipboard:error="onError" type="button"
+                                                class="el-button copy el-button--warning el-button--mini is-round">
+
+                                                <span>Copy Address</span>
+                                            </button></div>
+                                    </div>
+                                    <p data-v-192d09bc="" style="font-size: 1.2em; font-weight: 500;">
+                                        {{format()}}</p>
+                                    <p data-v-192d09bc=""
+                                        style="font-size: 1.1em; font-weight: 500; color: red; border-top: 4px solid rgb(14, 48, 94); padding-top: 1.5em;">
+                                        Expiration Time </p>
+                                    <p data-v-192d09bc="" v-if="isshow == ''" style="font-size: 1.1em; font-weight: 500; color: red;">
+                                        {{countDown}}
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="el-loading-mask" style="display: none;">
+                            <div class="el-loading-spinner"><svg viewBox="25 25 50 50" class="circular">
+                                    <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.min.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/vue-clipboard2/0.3.3/vue-clipboard.min.js"></script>
+<!--<script src="http://localhost:63342/paydemo/hjh/payDemo/pay.html?_ijt=7a94gm7ik7cb43l46rdpiorhar"></script>-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                visible: false,
+                address: "",
+                time: '',
+                countDown: '',
+                isshow:'',
+                money:''
+            }
+        },
+        created() {
+            this.time = this.getQueryVariable("time")
+            console.log(this.time)
+            this.address = this.getQueryVariable("address")
+            this.begin()
+            this.getpay()
+        },
+        mounted() {
+            this.creatQrCode();
+        },
+        methods: {
+            getpay() {
+                var that = this;
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) { // 监听请求完成
+                        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+                            var res = JSON.parse(xhr.responseText);
+                            console.log(res)
+                            if (res.code == 200) {
+                                that.$message.error('付款成功！');
+                                that.isshow = 200
+                                that.money = res.data
+                            }else{
+                                that.$message.error('付款失败！');
+                                that.isshow = 500
+                            }
+                        } else {
+                            console.log('请求失败')
+                        }
+                    }
+                }
+                xhr.open("get", "https://api.adminuu.pro/ucc/pay/getPay?address="+that.address, true); // 异步请求
+                xhr.send(null);
+            },
+            // 生成二维码
+            creatQrCode() {
+                var that = this;
+                $("#qrcode").qrcode({
+                    text: that.address, //设置二维码内容
+                    render: "table", //设置渲染方式
+                    width: 200, //设置宽度,默认生成的二维码大小是 256×256
+                    height: 200, //设置高度
+                    typeNumber: -1, //计算模式
+                    background: "#ffffff", //背景颜色
+                    foreground: "#000000" //前景颜色
+                });
+            },
+            // 获取url中参数
+            getQueryVariable(variable) {
+                var query = window.location.search.substring(1);
+                var vars = query.split("&");
+                for (var i = 0; i < vars.length; i++) {
+                    var pair = vars[i].split("=");
+                    if (pair[0] == variable) {
+                        return pair[1];
+                    }
+                }
+                return ('');
+            },
+            onCopy(e) {
+                this.$message.success("内容已复制到剪切板！")
+            },
+            // 复制失败时的回调函数
+            onError(e) {
+                this.$message.error("抱歉，复制失败！")
+            },
+            add0(m) { return m < 10 ? '0' + m : m },
+            format() {
+                let shijianchuo = parseInt(this.time)
+
+                var time = new Date(shijianchuo);
+                var y = time.getFullYear();
+                var m = time.getMonth() + 1;
+                var d = time.getDate();
+                var h = time.getHours();
+                var mm = time.getMinutes();
+                var s = time.getSeconds();
+                return y + '-' + this.add0(m) + '-' + this.add0(d) + ' ' + this.add0(h) + ':' + this.add0(mm) + ':' + this.add0(s);
+            },
+            begin() {
+                this.maxTime = (parseInt(this.time) - new Date().getTime()) / 1000 + (30 * 60);
+                this.handleCountDown();
+            },
+            handleCountDown() {
+                this.interval = setInterval(() => {
+                    this.maxTime--;
+                    let minutes = Math.floor(this.maxTime / 60);
+                    let seconds = Math.floor(this.maxTime % 60);
+                    minutes = minutes < 10 ? '0' + minutes : minutes;
+                    seconds = seconds < 10 ? '0' + seconds : seconds;
+                    this.countDown = minutes + ":" + seconds + "";
+                    if (this.maxTime === 0) {
+                        clearInterval(this.interval)
+                    }
+                }, 1000)
+            },
+        }
+    })
+</script>
+
+</html>

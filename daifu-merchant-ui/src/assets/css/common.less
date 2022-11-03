@@ -1,0 +1,185 @@
+// 一些可以用来通用的样式
+
+@import "reset";
+@import "variable";
+// 相关参数
+@bold-color: #cafaff;
+@normal-color: #abdef9;
+@border-color: #0093f0;
+@border: 1px solid @border-color;
+@green: #64d368;
+
+// 位置相关
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+.margin-t-10 {
+  margin-top: 10px;
+}
+.margin-t-20 {
+  margin-top: 20px;
+}
+.margin-l-10 {
+  margin-left: 10px;
+}
+.margin-l-25 {
+  margin-left: 25px !important;
+}
+.margin-l-30 {
+  margin-left: 30px !important;
+}
+.margin-r-5 {
+  margin-right: 5px;
+}
+.margin-r-10 {
+  margin-right: 10px;
+}
+.txt-center {
+  text-align: center;
+}
+
+// 边框线相关
+.border-linear {
+  border-image: -webkit-linear-gradient(to right, rgba(0, 147, 240, 0) 0%, #0093f0 50%, rgba(0, 147, 240, 0) 100%) 1 1; // 图片边框向内偏移，图片边框的宽度
+  border-image: -moz-linear-gradient(to right, rgba(0, 147, 240, 0) 0%, #0093f0 50%, rgba(0, 147, 240, 0) 100%) 1 1;
+  border-image: linear-gradient(to right, rgba(0, 147, 240, 0) 0%, #0093f0 50%, rgba(0, 147, 240, 0) 100%) 1 1;
+}
+.border-linear-vertical {
+  border-image: -webkit-linear-gradient(to bottom, rgba(0, 147, 240, 0) 0%, #0093f0 50%, rgba(0, 147, 240, 0) 100%) 1 1; // 图片边框向内偏移，图片边框的宽度
+  border-image: -moz-linear-gradient(to bottom, rgba(0, 147, 240, 0) 0%, #0093f0 50%, rgba(0, 147, 240, 0) 100%) 1 1;
+  border-image: linear-gradient(to bottom, rgba(0, 147, 240, 0) 0%, #0093f0 50%, rgba(0, 147, 240, 0) 100%) 1 1;
+}
+
+// 文本相关
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+.text-center {
+  text-align: center !important;
+}
+.text-justify {
+  text-align: justify;
+  text-align-last: justify;
+}
+.text-primary {
+  color: #0093f0;
+}
+
+// 按钮样式
+.btn {
+  display: inline-block;
+  width: 110px;
+  border: 1px solid;
+  border-radius: 20px;
+  color: @normal-color;
+  line-height: 25px;
+  text-align: center;
+  cursor: pointer;
+  &[disabled='disabled'] {
+    border-color: #0e3d69 !important;
+    background-color: #4f697e !important;
+    cursor: not-allowed;
+  }
+}
+.btn-primary {
+  border-color: @border-color;
+  background-color: rgba(0, 125, 248, 0.5);
+  &:hover {
+    background-color: rgba(0, 125, 248, 1);
+  }
+
+}
+.btn-error {
+  border-color: rgb(236, 89, 137);
+  background-color: rgba(185, 72, 104, 0.7);
+  &:hover {
+    background-color: rgba(185, 72, 104, 1);
+  }
+}
+
+// 表单样式
+.input-field {
+  border: 1px solid rgba(0, 125, 248, 0.5);
+  border-radius: 5px;
+  background-color: rgba(12, 24, 44, 0.6);
+  line-height: 25px;
+  text-indent: 10px;
+  &[disabled] {
+    background-color: #4f697e;
+    cursor: not-allowed;
+  }
+}
+
+// 重置elment-ui相关样式
+.el-pagination {
+  float: right;
+  margin-bottom: 20px;
+  .el-input__inner {
+    border-color: @mainColor !important;
+  }
+  .btn-prev, .btn-next {
+    background-color: transparent !important;
+  }
+}
+.el-pager .number,
+.el-pager .el-icon{
+  min-width: auto;
+  padding: 0 8px;
+  margin-right: 10px;
+  background-color: transparent;
+  color: #666;
+  &.active {
+    border-radius: 5px;
+    background-color: @mainColor;
+    color: white;
+  }
+}
+.el-pager .number:last-child {
+  margin-right: 0;
+}
+
+// 弹框相关样式优化 dialog、message-box
+.el-message-box {
+  border-width: 0 !important;
+  border-radius: 10px !important;
+  text-align: center !important;
+}
+.el-dialog__header,
+.el-message-box__header {
+  padding: 10px !important;
+  text-align: center;
+}
+.el-dialog__title,
+.el-message-box__title {
+  font-size: 16px !important;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.el-dialog__headerbtn,
+.el-message-box__headerbtn {
+  top: 12px !important;
+}
+.el-dialog__close,
+.el-message-box__close {
+  color: white !important;
+}
+.el-dialog__body {
+  padding-bottom: 10px !important;
+}
+.el-message-box__btns{
+  text-align: center !important;
+}

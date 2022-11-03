@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.UcUserMapper">
+
+    <resultMap type="com.hjh.erp.domain.UcUser" id="UcUserResult">
+        <result property="id"    column="id"    />
+        <result property="applicationTime"    column="application_time"    />
+        <result property="avatar"    column="avatar"    />
+        <result property="inviterId"    column="inviter_id"    />
+        <result property="lastLoginTime"    column="last_login_time"    />
+        <result property="loginCount"    column="login_count"    />
+        <result property="mobilePhone"    column="mobile_phone"    />
+        <result property="password"    column="password"    />
+        <result property="registrationTime"    column="registration_time"    />
+        <result property="salt"    column="salt"    />
+        <result property="status"    column="status"    />
+        <result property="account"    column="account"    />
+        <result property="superPartner"    column="super_partner"    />
+        <result property="trcAddress"    column="trc_address"    />
+        <result property="username"    column="username"    />
+        <result property="ip"    column="ip"    />
+        <result property="transactionStatus"    column="transaction_status"    />
+        <result property="promotionCode"    column="promotion_code"    />
+    </resultMap>
+
+    <sql id="selectUcUserVo">
+        select id, application_time, avatar, inviter_id, last_login_time, login_count, mobile_phone, password, registration_time, salt, status, account, super_partner, trc_address, username, ip, transaction_status, promotion_code from uc_user
+    </sql>
+
+    <select id="selectUcUserById" parameterType="Long" resultMap="UcUserResult">
+                    <include refid="selectUcUserVo"/>
+            where id = #{id}
+            </select>
+
+    <select id="selectUcUserList" parameterType="com.hjh.erp.domain.UcUser" resultMap="UcUserResult">
+        <include refid="selectUcUserVo"/>
+        <where>
+            <if test="ucUser.id != null "> and id = #{ucUser.id}</if>
+            <if test="ucUser.avatar != null  and ucUser.avatar != ''"> and avatar = #{ucUser.avatar}</if>
+            <if test="ucUser.inviterId != null "> and inviter_id = #{ucUser.inviterId}</if>
+            <if test="ucUser.lastLoginTime != null "> and last_login_time = #{ucUser.lastLoginTime}</if>
+            <if test="ucUser.status != null "> and status = #{ucUser.status}</if>
+            <if test="ucUser.account != null  and ucUser.account != ''"> and account = #{ucUser.account}</if>
+            <if test="ucUser.username != null  and ucUser.username != ''"> and username like concat('%', #{ucUser.username}, '%')</if>
+            <if test="ucUser.ip != null  and ucUser.ip != ''"> and ip = #{ucUser.ip}</if>
+        </where>
+        order by id desc
+    </select>
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.SystemInfoMapper">
+
+    <resultMap type="com.hjh.erp.domain.SystemInfo" id="SystemInfoResult">
+        <result property="id"    column="id"    />
+        <result property="kefu" column="kefu"/>
+        <result property="telegram"    column="telegram"    />
+        <result property="whatsapp"    column="whatsapp"    />
+        <result property="backwater"    column="backwater"    />
+        <result property="oneAgent"    column="one_agent"    />
+        <result property="twoAgent"    column="two_agent"    />
+    </resultMap>
+
+    <sql id="selectSystemInfoVo">
+        select * from system_info
+    </sql>
+
+    <select id="selectSystemInfoById" parameterType="Long" resultMap="SystemInfoResult">
+                    <include refid="selectSystemInfoVo"/>
+            where id = #{id}
+            </select>
+
+    <select id="selectSystemInfoList" parameterType="com.hjh.erp.domain.SystemInfo" resultMap="SystemInfoResult">
+        <include refid="selectSystemInfoVo"/>
+        <where>
+            <if test="systemInfo.telegram != null  and systemInfo.telegram != ''"> and telegram = #{systemInfo.telegram}</if>
+            <if test="systemInfo.whatsapp != null  and systemInfo.whatsapp != ''"> and whatsapp = #{systemInfo.whatsapp}</if>
+            <if test="systemInfo.backwater != null "> and backwater = #{systemInfo.backwater}</if>
+            <if test="systemInfo.oneAgent != null "> and one_agent = #{systemInfo.oneAgent}</if>
+            <if test="systemInfo.twoAgent != null "> and two_agent = #{systemInfo.twoAgent}</if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="178px" height="113px" viewBox="0 0 178 113" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>udun-web36</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#F1D6BB" offset="0%"></stop>
+            <stop stop-color="#F8E9DC" stop-opacity="0.217641977" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(-1200.000000, -378.000000)" fill="#FDF7F0" id="udun-web36" stroke="url(#linearGradient-1)">
+            <polygon points="1289 379 1377 490 1201 490"></polygon>
+        </g>
+    </g>
+</svg>

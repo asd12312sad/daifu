@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.OrderMapper">
+
+    <resultMap type="com.hjh.erp.domain.Order" id="OrderResult">
+        <result property="id"    column="id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="payAddress"    column="pay_address"    />
+        <result property="gameName"    column="game_name"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="profit"    column="profit"    />
+        <result property="status"    column="status"    />
+        <result property="result"    column="result"    />
+        <result property="userResult"    column="user_result"    />
+        <result property="systemResult"    column="system_result"    />
+        <result property="amount"    column="amount"    />
+        <result property="proxyOneAmount"    column="proxy_one_amount"    />
+        <result property="proxyTwoAmount"    column="proxy_two_amount"    />
+        <result property="fanshuiAmount"    column="fanshui_amount"    />
+        <result property="fee"    column="fee"    />
+        <result property="address"    column="address"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="txId"    column="tx_id"    />
+        <result property="tradeId"    column="trade_id"    />
+        <result property="tradeType"    column="trade_type"    />
+        <result property="gameId"    column="game_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="proxyOneId"    column="proxy_one_id"    />
+        <result property="proxyTwoId"    column="proxy_two_id"    />
+        <result property="fanshui"    column="fanshui"    />
+        <result property="tuiguang"    column="tuiguang"    />
+        <result property="proxyOneName"    column="proxy_one_name"    />
+        <result property="proxyTwoName"    column="proxy_two_name"    />
+        <result property="remark"   column="remark"    />
+    </resultMap>
+
+    <sql id="selectOrderVo">
+        select id, user_name, pay_address, game_name, status, result, user_result, system_result, amount, proxy_one_amount, proxy_two_amount, fanshui_amount, fee, address, create_time, tx_id, trade_id, trade_type, game_id, user_id, proxy_one_id, proxy_two_id, fanshui, tuiguang, proxy_one_name, proxy_two_name,create_date,remark,profit from `order`
+    </sql>
+
+    <select id="selectOrderById" parameterType="Long" resultMap="OrderResult">
+                    <include refid="selectOrderVo"/>
+            where id = #{id}
+            </select>
+
+    <select id="selectOrderList" parameterType="com.hjh.erp.domain.Order" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        <where>
+            <if test="order.userName != null  and order.userName != ''"> and user_name like concat('%', #{order.userName}, '%')</if>
+            <if test="order.gameName != null  and order.gameName != ''"> and game_name like concat('%', #{order.gameName}, '%')</if>
+            <if test="order.status != null "> and status = #{order.status}</if>
+            <if test="order.result != null "> and result = #{order.result}</if>
+            <if test="order.fanshuiAmount != null "> and fanshui_amount = #{order.fanshuiAmount}</if>
+            <if test="order.fee != null "> and fee = #{order.fee}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+            <if test="order.fanshui != null "> and fanshui = #{order.fanshui}</if>
+            <if test="order.tradeType != null "> and trade_type = #{order.tradeType}</if>
+
+            <if test="order.proxyOneName != null  and order.proxyOneName != ''"> and proxy_one_name like concat('%', #{order.proxyOneName}, '%')</if>
+            <if test="order.proxyTwoName != null  and order.proxyTwoName != ''"> and proxy_two_name like concat('%', #{order.proxyTwoName}, '%')</if>
+        </where>
+        order by  create_date desc
+
+    </select>
+    <select id="selectSum" resultType="java.util.Map">
+        select
+            game.name,
+            ifnull((select sum(amount) from `order` where  create_date like CONCAT(DATE(NOW()),"%") and game_id = game.id  and trade_type = 1),0) liushui,
+            ifnull((select sum(amount-IFNULL(order.profit ,0)-IFNULL(order.proxy_one_amount ,0)- IFNULL(`order`.proxy_two_amount ,0)- IFNULL(`order`.fanshui_amount ,0)) from `order` where create_date like CONCAT(DATE(NOW()),"%") and game_id = game.id  and trade_type = 1),0) inamount
+        from game
+
+    </select>
+
+</mapper>

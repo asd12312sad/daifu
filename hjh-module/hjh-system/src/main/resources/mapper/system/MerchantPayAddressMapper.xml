@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.MerchantPayAddressMapper">
+
+    <resultMap type="com.hjh.erp.domain.MerchantPayAddress" id="MerchantPayAddressResult">
+        <result property="address"    column="address"    />
+        <result property="merchantId"    column="merchant_id"    />
+        <result property="hexAddress"    column="hex_address"    />
+        <result property="returnAddress"    column="return_address"    />
+        <result property="privateKey"    column="private_key"    />
+        <result property="privateKeyBase"    column="private_key_base"    />
+        <result property="trxBalance"    column="trx_balance"    />
+        <result property="usdtBalance"    column="usdt_balance"    />
+        <result property="merchantOrderNo"    column="merchant_order_no"    />
+        <result property="message"    column="message"    />
+        <result property="createTime"    column="create_time"    />
+
+    </resultMap>
+
+    <sql id="selectMerchantPayAddressVo">
+        select address, merchant_id, hex_address, return_address, private_key, private_key_base, trx_balance, usdt_balance, merchant_order_no,message,create_time from merchant_pay_address
+    </sql>
+
+    <select id="selectMerchantPayAddressByAddress" parameterType="String" resultMap="MerchantPayAddressResult">
+            <include refid="selectMerchantPayAddressVo"/>
+            where address = #{address}
+    </select>
+
+    <select id="selectMerchantPayAddressList" parameterType="com.hjh.erp.domain.MerchantPayAddress" resultMap="MerchantPayAddressResult">
+        <include refid="selectMerchantPayAddressVo"/>
+        <where>
+            <if test="merchantPayAddress.address != null  and merchantPayAddress.address != ''"> and address = #{merchantPayAddress.address}</if>
+            <if test="merchantPayAddress.merchantId != null  and merchantPayAddress.merchantId != ''"> and merchant_id = #{merchantPayAddress.merchantId}</if>
+            <if test="merchantPayAddress.returnAddress != null  and merchantPayAddress.returnAddress != ''"> and return_address = #{merchantPayAddress.returnAddress}</if>
+            <if test="merchantPayAddress.merchantOrderNo != null  and merchantPayAddress.merchantOrderNo != ''"> and merchant_order_no = #{merchantPayAddress.merchantOrderNo}</if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

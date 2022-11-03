@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.agent.mapper.MerchantPayAddressMapper">
+
+    <select id="selectMerchantPayAddressList" resultType="com.ms.agent.domain.MerchantPayAddress">
+        select merchant_pay_address.*,merchant.name merchantName,merchant.account merchantAccount from merchant_pay_address
+        left join merchant on merchant.id = merchant_pay_address.merchant_id
+        where merchant.agent_id = #{merchantPayAddress.agentId}
+        and merchant_pay_address.have_usdt = 1
+        <if test="merchantPayAddress.haveUsdt != null"> and merchant_pay_address.have_usdt = #{merchantPayAddress.haveUsdt}</if>
+        <if test="merchantPayAddress.privateKey != null"> and merchant_pay_address.message != "SUCCESS" </if>
+        <if test="merchantPayAddress.message != null"> and merchant_pay_address.message = "SUCCESS" </if>
+            <if test="merchantPayAddress.address != null  and merchantPayAddress.address != ''"> and merchant_pay_address.address like concat("%", #{merchantPayAddress.address},"%")</if>
+
+
+          <if test="merchantPayAddress.startDate != null">
+            and merchant_pay_address.create_time between #{merchantPayAddress.startDate} and #{merchantPayAddress.endDate}
+        </if>
+        <if test="merchantPayAddress.status != null"> and merchant_pay_address.status = #{merchantPayAddress.status}</if>
+
+
+        <if test="merchantPayAddress.merchantId != null  and merchantPayAddress.merchantId != ''">
+            and   merchant_pay_address.merchant_id = #{merchantPayAddress.merchantId}
+        </if>
+            <if test="merchantPayAddress.returnAddress != null  and merchantPayAddress.returnAddress != ''"> and merchant_pay_address.return_address like  concat("%",  #{merchantPayAddress.returnAddress} ,"%")</if>
+            <if test="merchantPayAddress.merchantOrderNo != null  and merchantPayAddress.merchantOrderNo != ''"> and merchant_pay_address.merchant_order_no like  concat("%",  #{merchantPayAddress.merchantOrderNo} ,"%")</if>
+        ORDER BY merchant_pay_address.create_time DESC
+    </select>
+    <select id="selectMerchantPayAddressExport" resultType="com.ms.agent.domain.MerchantPayAddress">
+        select merchant_pay_address.*,merchant.name merchantName,merchant.account merchantAccount from merchant_pay_address
+        left join merchant on merchant.id = merchant_pay_address.merchant_id
+        where merchant.agent_id = #{merchantPayAddress.agentId}
+
+        <if test="merchantPayAddress.address != null  and merchantPayAddress.address != ''"> and merchant_pay_address.address = #{merchantPayAddress.address}</if>
+        <if test="merchantPayAddress.merchantId != null  and merchantPayAddress.merchantId != ''">
+            and   merchant_pay_address.merchant_id = #{merchantPayAddress.merchantId}
+        </if>
+        <if test="merchantPayAddress.returnAddress != null  and merchantPayAddress.returnAddress != ''"> and merchant_pay_address.return_address = #{merchantPayAddress.returnAddress}</if>
+        <if test="merchantPayAddress.merchantOrderNo != null  and merchantPayAddress.merchantOrderNo != ''"> and merchant_pay_address.merchant_order_no = #{merchantPayAddress.merchantOrderNo}</if>
+        ORDER BY merchant_pay_address.create_time DESC
+
+    </select>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.MerchantPayOrderMapper">
+
+    <resultMap type="com.hjh.erp.domain.MerchantPayOrder" id="MerchantPayOrderResult">
+        <result property="address"    column="address"    />
+        <result property="merchantId"    column="merchant_id"    />
+        <result property="hexAddress"    column="hex_address"    />
+        <result property="returnAddress"    column="return_address"    />
+        <result property="privateKey"    column="private_key"    />
+        <result property="privateKeyBase"    column="private_key_base"    />
+        <result property="trxBalance"    column="trx_balance"    />
+        <result property="usdtBalance"    column="usdt_balance"    />
+        <result property="merchantOrderNo"    column="merchant_order_no"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="haveUsdt"    column="have_usdt"    />
+        <result property="payAddress"    column="pay_address"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="message"    column="message"    />
+        <result property="ownerAddress"    column="owner_address"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+    <sql id="selectMerchantPayOrderVo">
+        select address, merchant_id, hex_address, return_address, private_key, private_key_base, trx_balance, usdt_balance, merchant_order_no, create_time, have_usdt, pay_address, order_no, message, owner_address, id from merchant_pay_order
+    </sql>
+
+    <select id="selectMerchantPayOrderById" parameterType="Long" resultMap="MerchantPayOrderResult">
+            <include refid="selectMerchantPayOrderVo"/>
+            where id = #{id}
+    </select>
+
+    <select id="selectMerchantPayOrderList" parameterType="com.hjh.erp.domain.MerchantPayOrder" resultMap="MerchantPayOrderResult">
+        <include refid="selectMerchantPayOrderVo"/>
+        <where>
+            <if test="merchantPayOrder.address != null  and merchantPayOrder.address != ''"> and address = #{merchantPayOrder.address}</if>
+            <if test="merchantPayOrder.merchantId != null  and merchantPayOrder.merchantId != ''"> and merchant_id = #{merchantPayOrder.merchantId}</if>
+            <if test="merchantPayOrder.returnAddress != null  and merchantPayOrder.returnAddress != ''"> and return_address = #{merchantPayOrder.returnAddress}</if>
+            <if test="merchantPayOrder.merchantOrderNo != null  and merchantPayOrder.merchantOrderNo != ''"> and merchant_order_no = #{merchantPayOrder.merchantOrderNo}</if>
+            <if test="merchantPayOrder.haveUsdt != null "> and have_usdt = #{merchantPayOrder.haveUsdt}</if>
+            <if test="merchantPayOrder.payAddress != null  and merchantPayOrder.payAddress != ''"> and pay_address = #{merchantPayOrder.payAddress}</if>
+            <if test="merchantPayOrder.orderNo != null  and merchantPayOrder.orderNo != ''"> and order_no = #{merchantPayOrder.orderNo}</if>
+        </where>
+
+        order by  create_time desc
+    </select>
+
+    <select id="selectHomePayCount" resultType="com.hjh.erp.domain.HomeCountVO">
+
+        SELECT
+            count(0) payCount,
+
+            count(IF(have_usdt=1, true, null))  payEndCount,
+            sum(IF(have_usdt=1, merchant_pay_order.usdt_balance, 0))  paySumAmount,
+            count(IF(message='SUCCESS', true, null))  payReturnCount
+        from merchant_pay_order
+
+    </select>
+
+    <select id="selectHomeCollectCount" resultType="com.hjh.erp.domain.HomeCountVO">
+
+        SELECT
+            count(0) collectCount,
+            count(IF(have_usdt=1, true, null))  collectEndCount,
+            sum(IF(have_usdt=1, merchant_pay_address.usdt_balance, 0))  collectSumAmount,
+            count(IF(message='SUCCESS', true, null))  collectReturnCount
+        from merchant_pay_address
+
+    </select>
+    <select id="selectHomeCountPay" resultType="com.hjh.erp.domain.HomeCountVO">
+
+        SELECT
+            count(0) payCount,
+
+            count(IF(have_usdt=1, true, null))  payEndCount,
+            sum(IF(have_usdt=1, merchant_pay_order.usdt_balance, 0))  paySumAmount,
+            count(IF(message='SUCCESS', true, null))  payReturnCount
+        from merchant_pay_order
+        where  create_time like concat(#{date},"%")
+
+    </select>
+    <select id="selectHomeCountCollect" resultType="com.hjh.erp.domain.HomeCountVO">
+
+        SELECT
+            count(0) collectCount,
+            count(IF(have_usdt=1, true, null))  collectEndCount,
+            sum(IF(have_usdt=1, merchant_pay_address.usdt_balance, 0))  collectSumAmount,
+            count(IF(message='SUCCESS', true, null))  collectReturnCount
+        from merchant_pay_address
+        where  create_time like concat(#{date},"%")
+
+    </select>
+
+
+</mapper>

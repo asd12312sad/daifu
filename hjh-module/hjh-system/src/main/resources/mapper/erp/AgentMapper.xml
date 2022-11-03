@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.AgentMapper">
+
+    <resultMap type="com.hjh.erp.domain.Agent" id="AgentResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="account"    column="account"    />
+        <result property="password"    column="password"    />
+        <result property="loginCount"    column="login_count"    />
+        <result property="lastLoginDate"    column="last_login_date"    />
+        <result property="ip"    column="ip"    />
+        <result property="payFee"    column="pay_fee"    />
+        <result property="fee"    column="fee"    />
+    </resultMap>
+
+    <sql id="selectAgentVo">
+        select id, name, create_by, create_time, update_by, update_time, remark, account, password, login_count, last_login_date,invite_code, ip, pay_fee, fee from agent
+    </sql>
+
+    <select id="selectAgentById" parameterType="Long" resultMap="AgentResult">
+                    <include refid="selectAgentVo"/>
+            where id = #{id}
+            </select>
+
+    <select id="selectAgentList" parameterType="com.hjh.erp.domain.Agent" resultMap="AgentResult">
+        <include refid="selectAgentVo"/>
+        <where>
+            <if test="agent.name != null  and agent.name != ''"> and name like concat('%', #{agent.name}, '%')</if>
+            <if test="agent.account != null  and agent.account != ''"> and account like concat('%', #{agent.account}, '%')</if>
+        </where>
+    </select>
+
+</mapper>

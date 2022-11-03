@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.merchant.mapper.MerchantPayOrderMapper">
+
+    <select id="selectOrder" resultType="com.ms.merchant.domain.MerchantPayOrder">
+        select * from merchant_pay_order
+        where  merchant_id = #{merchantPayOrder.merchantId}
+
+        <if test="merchantPayOrder.privateKey != null"> and message != "SUCCESS" </if>
+        <if test="merchantPayOrder.message != null"> and message = "SUCCESS" </if>
+
+        <if test="merchantPayOrder.startDate != null">
+         and create_time between #{merchantPayOrder.startDate} and #{merchantPayOrder.endDate}
+          </if>
+
+        <if test="merchantPayOrder.status != null"> and status = #{merchantPayOrder.status}</if>
+
+        <if test="merchantPayOrder.address != null  and merchantPayOrder.address != ''"> and address like concat("%", #{merchantPayOrder.address},"%")</if>
+        <if test="merchantPayOrder.returnAddress != null  and merchantPayOrder.returnAddress != ''"> and return_address like concat("%", #{merchantPayOrder.returnAddress},"%")</if>
+        <if test="merchantPayOrder.merchantOrderNo != null  and merchantPayOrder.merchantOrderNo != ''"> and merchant_order_no like concat("%",#{merchantPayOrder.merchantOrderNo},"%") </if>
+        <if test="merchantPayOrder.haveUsdt != null "> and have_usdt = #{merchantPayOrder.haveUsdt}</if>
+        <if test="merchantPayOrder.payAddress != null  and merchantPayOrder.ownerAddress != ''"> and owner_address like concat("%", #{merchantPayOrder.ownerAddress},"%")</if>
+        order by  create_time desc
+
+    </select>
+
+
+    <select id="selectHomeCollectCount" resultType="com.ms.merchant.domain.vo.HomeCountVO">
+        SELECT
+            count(0) collectCount,
+            count(IF(have_usdt=1, true, null))  collectEndCount,
+            sum(IF(have_usdt=1, merchant_pay_address.received_amount, 0))  collectSumAmount,
+            count(IF(message='SUCCESS', true, null))  collectReturnCount
+        from merchant_pay_address
+        where merchant_id  = #{userId}
+--           今天
+          and TO_DAYS(merchant_pay_address.create_time ) = TO_DAYS(NOW())
+
+    </select>
+    <select id="selectHomePayCount" resultType="com.ms.merchant.domain.vo.HomeCountVO">
+
+        SELECT
+            count(0) payCount,
+
+            count(IF(have_usdt=1, true, null))  payEndCount,
+            sum(IF(have_usdt=1, merchant_pay_order.usdt_balance, 0))  paySumAmount,
+            count(IF(message='SUCCESS', true, null))  payReturnCount
+        from merchant_pay_order
+        where merchant_id  = #{userId}
+          and TO_DAYS(merchant_pay_order.create_time ) = TO_DAYS(NOW())
+
+
+    </select>
+    <select id="selectHomeCountPay" resultType="com.ms.merchant.domain.vo.HomeCountVO">
+
+        SELECT
+            count(0) payCount,
+
+            count(IF(have_usdt=1, true, null))  payEndCount,
+            sum(IF(have_usdt=1, merchant_pay_order.usdt_balance, 0))  paySumAmount,
+            count(IF(message='SUCCESS', true, null))  payReturnCount
+        from merchant_pay_order
+        where  create_time like concat(#{date},"%")
+        and merchant_id  = #{userId}
+
+    </select>
+
+    <select id="selectHomeCountCollect" resultType="com.ms.merchant.domain.vo.HomeCountVO">
+
+        SELECT
+            count(0) collectCount,
+            count(IF(have_usdt=1, true, null))  collectEndCount,
+            sum(IF(have_usdt=1, merchant_pay_address.usdt_balance, 0))  collectSumAmount,
+            count(IF(message='SUCCESS', true, null))  collectReturnCount
+        from merchant_pay_address
+        where  create_time like concat(#{date},"%")
+          and merchant_id  = #{userId}
+
+    </select>
+    <select id="selectOrderExport" resultType="com.ms.merchant.domain.MerchantPayAddress">
+        select address, merchant_id, hex_address, return_address, private_key, private_key_base, trx_balance, usdt_balance, merchant_order_no, create_time, have_usdt, pay_address, order_no, message, owner_address, id from merchant_pay_order
+        where  merchant_id = #{merchantPayOrder.merchantId}
+        <if test="merchantPayOrder.address != null  and merchantPayOrder.address != ''"> and address = #{merchantPayOrder.address}</if>
+        <if test="merchantPayOrder.returnAddress != null  and merchantPayOrder.returnAddress != ''"> and return_address = #{merchantPayOrder.returnAddress}</if>
+        <if test="merchantPayOrder.merchantOrderNo != null  and merchantPayOrder.merchantOrderNo != ''"> and merchant_order_no = #{merchantPayOrder.merchantOrderNo}</if>
+        <if test="merchantPayOrder.haveUsdt != null "> and have_usdt = #{merchantPayOrder.haveUsdt}</if>
+        <if test="merchantPayOrder.payAddress != null  and merchantPayOrder.payAddress != ''"> and pay_address = #{merchantPayOrder.payAddress}</if>
+        order by  create_time desc
+
+    </select>
+    <select id="collectionTodayHeader" resultType="com.ms.merchant.domain.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(merchant_pay_address.order_amount),0) askSuccessAmount,
+            IFNULL(sum(
+
+                           IFNULL(merchant_pay_address.received_amount,0)
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+                           IFNULL(merchant_pay_address.fee_amount,0)
+
+                       ),0) feeAmount,
+            count(0) orderCount,
+            IFNULL(count(merchant_pay_address.received_amount),0) paySuccessCount
+
+        from merchant_pay_address
+        where merchant_pay_address.merchant_id = #{id}
+          and TO_DAYS(merchant_pay_address.create_time ) = TO_DAYS(NOW())
+
+    </select>
+    <select id="collectionHeader" resultType="com.ms.merchant.domain.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(merchant_pay_address.order_amount),0) askSuccessAmount,
+            IFNULL(sum(
+
+                           IFNULL(merchant_pay_address.received_amount,0)
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+                           IFNULL(merchant_pay_address.fee_amount,0)
+
+                       ),0) feeAmount,
+            count(0) orderCount,
+            IFNULL(count(merchant_pay_address.received_amount),0) paySuccessCount
+
+        from merchant_pay_address
+        where merchant_pay_address.merchant_id = #{id}
+
+    </select>
+    <select id="payTodayHeader" resultType="com.ms.merchant.domain.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(merchant_pay_order.usdt_balance),0) askSuccessAmount,
+            IFNULL(sum(
+
+                           If(merchant_pay_order.have_usdt=1,merchant_pay_order.usdt_balance,0)
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+                           If(merchant_pay_order.fee_amount!=null,merchant_pay_order.fee_amount,0)
+                       ),0)
+
+                                                           feeAmount,
+            count(0) orderCount,
+            IFNULL(sum(If(merchant_pay_order.have_usdt=1,1,0) ),0) paySuccessCount
+
+        from merchant_pay_order
+        where merchant_pay_order.merchant_id = #{id}
+          and TO_DAYS(merchant_pay_order.create_time ) = TO_DAYS(NOW())
+
+
+    </select>
+    <select id="payHeader" resultType="com.ms.merchant.domain.vo.OrderHeaderVo">
+
+        select
+            IFNULL(sum(merchant_pay_order.usdt_balance),0) askSuccessAmount,
+            IFNULL(sum(
+
+                           If(merchant_pay_order.have_usdt=1,merchant_pay_order.usdt_balance,0)
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+                           If(merchant_pay_order.fee_amount!=null,merchant_pay_order.fee_amount,0)
+                       ),0)
+
+                                                           feeAmount,
+            count(0) orderCount,
+            IFNULL(sum(If(merchant_pay_order.have_usdt=1,1,0) ),0) paySuccessCount
+
+        from merchant_pay_order
+        where merchant_pay_order.merchant_id = #{id}
+
+    </select>
+    <select id="passageHeader" resultType="com.ms.merchant.domain.vo.OrderHeaderVo">
+
+        select
+            IFNULL(sum(
+                           usdt_balance
+                       ),0) paySuccessAmount,
+
+            count(0) orderCount
+        from merchant_pay_order
+        where merchant_pay_order.merchant_id = #{id}
+        and merchant_pay_order.status = 1
+    </select>
+    <select id="successHeader" resultType="com.ms.merchant.domain.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(
+
+                           usdt_balance
+                       ),0) paySuccessAmount,
+            IFNULL(sum(
+
+                           fee_amount
+                       ),0) feeAmount,
+
+            count(0) orderCount
+
+        from merchant_pay_order
+        where merchant_pay_order.merchant_id = #{id}
+          and merchant_pay_order.status = 2
+
+    </select>
+    <select id="failHeader" resultType="com.ms.merchant.domain.vo.OrderHeaderVo">
+        select
+            IFNULL(sum(
+                           usdt_balance
+                       ),0) paySuccessAmount,
+            count(0) orderCount
+
+        from merchant_pay_order
+        where merchant_pay_order.merchant_id = #{id}
+          and merchant_pay_order.status = 0
+    </select>
+
+</mapper>

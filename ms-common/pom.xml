@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>hjh</artifactId>
+        <groupId>com.hjh.pay</groupId>
+        <version>3.7.1</version>
+    </parent>
+    <modules>
+        <module>ms-common-core</module>
+        <module>ms-common-swagger</module>
+        <module>ms-common-redis</module>
+        <module>ms-common-module</module>
+    </modules>
+    <artifactId>ms-common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        ms-common通用模块
+    </description>
+</project>

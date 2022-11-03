@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.common.mapper.CmsCustomerDailyAssignMapper">
+
+    <resultMap type="com.hjh.common.domain.CmsCustomerDailyAssign" id="CmsCustomerDailyAssignResult">
+        <id property="id" column="id"/>
+        <result property="dateStr" column="date_str"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="assignedCount" column="assigned_count"/>
+        <result property="allCount" column="all_count"/>
+        <result property="lastAssignTime" column="last_assign_time"/>
+        <result property="createCustomerDate" column="create_customer_date"/>
+        <result property="lastAssignBy" column="last_assign_by"/>
+        <result property="lastAssignById" column="last_assign_by_id"/>
+    </resultMap>
+
+    <resultMap id="CmsCustomerDailyAssignCmsCustomerAssignResult" type="com.hjh.common.domain.CmsCustomerDailyAssign"
+               extends="CmsCustomerDailyAssignResult">
+        <collection property="cmsCustomerAssignList" javaType="java.util.List"
+                    resultMap="CmsCustomerAssignResult"/>
+    </resultMap>
+
+    <resultMap type="com.hjh.common.domain.CmsCustomerAssign" id="CmsCustomerAssignResult">
+        <id property="id" column="sub_id"/>
+        <result property="beAssignedUserId" column="sub_be_assigned_user_id"/>
+        <result property="assignUser" column="assign_user"/>
+        <result property="beAssignedUser" column="sub_be_assigned_user"/>
+        <result property="assignCount" column="sub_assign_count"/>
+        <result property="assignTime" column="sub_assign_time"/>
+        <result property="createTime" column="sub_create_time"/>
+
+    </resultMap>
+
+    <sql id="selectCmsCustomerDailyAssignVo">
+        select id, status, remark, create_by,date_str, create_time, update_by, update_time, assigned_count, all_count, last_assign_time, create_customer_date, last_assign_by, last_assign_by_id from cms_customer_daily_assign
+    </sql>
+    <select id="selectCmsCustomerDailyAssignById" resultMap="CmsCustomerDailyAssignCmsCustomerAssignResult">
+        SELECT
+        a.id id,
+        a.STATUS,
+        a.remark,
+        a.create_by,
+        a.create_time,
+        a.update_by,
+        a.update_time,
+        a.assigned_count,
+        (
+        select sum(all_count) from cms_customer_daily_assign_source where
+        cms_customer_daily_assign_source.daily_assign_id = a.id
+
+        <if test="source!=null">and cms_customer_daily_assign_source.source = #{source}</if>
+        ) all_count,
+
+        a.last_assign_time,
+        a.create_customer_date,
+        a.last_assign_by,
+        a.last_assign_by_id,
+        b.id sub_id,
+        b.assign_user AS assign_user,
+        b.be_assigned_user_id AS sub_be_assigned_user_id,
+        b.be_assigned_user AS sub_be_assigned_user,
+        b.assign_count AS sub_assign_count,
+        b.assign_time AS sub_assign_time,
+        b.create_time AS sub_create_time
+        FROM
+        cms_customer_daily_assign a
+        LEFT JOIN cms_customer_daily_assign_source s ON s.daily_assign_id = a.id
+        LEFT JOIN
+        cms_customer_assign b ON b.daily_assign_id = a.id  <if test="source!=null"> and b.source = #{source}</if>
+        WHERE
+        a.id = #{id}
+    </select>
+
+    <select id="selectCmsCustomerDailyAssignList" parameterType="com.hjh.common.domain.CmsCustomerDailyAssign"
+            resultMap="CmsCustomerDailyAssignResult">
+        <include refid="selectCmsCustomerDailyAssignVo"/>
+        <where>
+            <if test="cmsCustomerDailyAssign.status != null ">and status = #{cmsCustomerDailyAssign.status}</if>
+            <if test="cmsCustomerDailyAssign.assignedCount != null ">and assigned_count =
+                #{cmsCustomerDailyAssign.assignedCount}
+            </if>
+            <if test="cmsCustomerDailyAssign.allCount != null ">and all_count = #{cmsCustomerDailyAssign.allCount}</if>
+
+            <if test="cmsCustomerDailyAssign.lastAssignTimeStart != null ">
+                and  last_assign_time  BETWEEN #{cmsCustomerDailyAssign.lastAssignTimeStart} and #{cmsCustomerDailyAssign.lastAssignTimeStartEnd}
+            </if>
+            <if test="cmsCustomerDailyAssign.createCustomerDateStart != null ">and
+             create_customer_date  BETWEEN #{cmsCustomerDailyAssign.createCustomerDateStart} and #{cmsCustomerDailyAssign.createCustomerDateEnd}
+            </if>
+            <if test="cmsCustomerDailyAssign.dateStrStart != null ">and
+                date_str  BETWEEN #{cmsCustomerDailyAssign.dateStrStart} and #{cmsCustomerDailyAssign.dateStrEnd}
+            </if>
+            <if test="cmsCustomerDailyAssign.lastAssignBy != null  and cmsCustomerDailyAssign.lastAssignBy != ''">and
+                last_assign_by = #{cmsCustomerDailyAssign.lastAssignBy}
+            </if>
+            <if test="cmsCustomerDailyAssign.statusList != null ">and
+                status in (
+                <foreach collection="cmsCustomerDailyAssign.statusList " item="status" separator=",">
+                    #{status} )
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+</mapper>

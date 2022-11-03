@@ -1,0 +1,60 @@
+// 具有科技感的边框效果 四角由虚线分割
+.border-science-outer(@width: 400px, @height: 300px, @color: #0099f6) {
+  position: relative;
+  width: @width;
+  height: @height;
+  padding: 8px;
+  border-radius: 5px;
+  background: linear-gradient(to left, @color, @color) left top no-repeat,
+  linear-gradient(to bottom, @color, @color) left top no-repeat,
+  linear-gradient(to left, @color, @color) right top no-repeat,
+  linear-gradient(to bottom, @color, @color) right top no-repeat,
+  linear-gradient(to left, @color, @color) left bottom no-repeat,
+  linear-gradient(to bottom, @color, @color) left bottom no-repeat,
+  linear-gradient(to left, @color, @color) right bottom no-repeat,
+  linear-gradient(to bottom, @color, @color) right bottom no-repeat;
+  background-size: 6px 20px, 20px 6px, 6px 20px, 20px 6px;
+}
+.border-science-inner(@borderWidth: 2px) {
+  position: absolute;
+  top: @borderWidth;
+  left: @borderWidth;
+  z-index: -1;
+  width: calc(~"100% - @{borderWidth} * 2");
+  height: calc(~"100% - @{borderWidth} * 2");
+  border: @borderWidth solid transparent;
+  &::before, &::after {
+    position: absolute;
+    content: "";
+  }
+  &::before {
+    bottom: -@borderWidth;
+    top: -@borderWidth;
+    left: 25px;
+    width: calc(~"100% - 50px");
+    height: 100%;
+    border-bottom: @borderWidth solid @color;
+    border-top: @borderWidth solid @color;
+  }
+  &::after {
+    left: -@borderWidth;
+    right: -@borderWidth;
+    top: 25px;
+    width: 100%;
+    height: calc(~"100% - 50px");
+    border-left: @borderWidth solid @color;
+    border-right: @borderWidth solid @color;
+  }
+}
+
+// 简单的边框样式
+.border-solid(@width: 1px, @color: #0099f6) {
+  border: @width solid @color;
+}
+
+// 横向渐变式边框线
+.border-linear-x(@color: #0099f6, @colorStart: rgba(0, 147, 240, 0), @colorEnd: rgba(0, 147, 240, 0)) {
+  border-image: -webkit-linear-gradient(to right, @colorStart 0%, @color 50%, @colorEnd 100%) 1 1; // 图片边框向内偏移，图片边框的宽度
+  border-image: -moz-linear-gradient(to right, @colorStart 0%, @color 50%, @colorEnd 100%) 1 1;
+  border-image: linear-gradient(to right, @colorStart 0%, @color 50%, @colorEnd 100%) 1 1;
+}

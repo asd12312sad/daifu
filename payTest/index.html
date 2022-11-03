@@ -1,0 +1,128 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cashier</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="./img/icons/favicon-16x16.png">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .mains {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mains .titles {
+            font-weight: 600;
+            font-size: 30px;
+            color: #000;
+            margin-top: 10vw;
+        }
+
+        .el-input__inner {
+            border: unset;
+            border-bottom: 1px solid #DCDFE6;
+            border-radius: unset;
+            width: 100%;
+        }
+
+        .el-select {
+            width: 100%;
+        }
+
+        .ordermain {
+            padding: 0 30px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="mains">
+            <p class="titles">DEMO TEST</p>
+        </div>
+        <div class="ordermain">
+            <el-form label-width="90px">
+                <el-form-item label="支付方式">
+                    <el-input v-model="type" readonly="true"></el-input>
+                </el-form-item>
+                <el-form-item label="收款地址">
+                    <el-input v-model="address" placeholder="请填写收款地址"></el-input>
+                </el-form-item>
+                <el-form-item label="订单金额">
+                    <el-input v-model="price" readonly="true" placeholder="请填写订单金额"></el-input>
+                </el-form-item>
+                <el-form-item label="谷歌验证码">
+                    <el-input v-model="code" readonly="true" placeholder="小额测试期间无需填写"></el-input>
+                </el-form-item>
+            </el-form>
+            <el-button type="primary" @click="submit" style="margin-top: 30px;width:100%;">Submit</el-button>
+        </div>
+    </div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.min.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/vue-clipboard2/0.3.3/vue-clipboard.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                price: '1USDT',
+                type: 'USDT-TRC20',
+                address: '',
+                code:'小额测试期间无需填写'
+            }
+        },
+        created() {
+
+        },
+        mounted() {
+
+        },
+        methods: {
+            submit() {
+                if (this.address == '') {
+                    this.$message.error('请填写收款地址');
+                    return;
+                }
+                var that = this;
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) { // 监听请求完成
+                        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+                            var res = JSON.parse(xhr.responseText);
+                            console.log(res)
+                            if (res.code == 200) {
+                                // that.$message.success('提交成功！');
+                                    // window.location.href = "success.html?time=" + new Date().getTime() + "&address=" + res.data.address
+                                    // window.open("https://www.paycloud.pro/py?time="+new Date().getTime()+"&address="+res.data.address, "_blank");
+                                window.location.href = "https://www.paycloud.pro/py?time="+new Date().getTime()+"&address="+res.data.address
+                            } else {
+                                that.$message.error('提交失败，请重新填写！');
+
+                            }
+                        } else {
+                            console.log('请求失败')
+                        }
+                    }
+                }
+                xhr.open("get", "https://api.adminuu.pro/admin/erp/merchant/aaaaaaa?address=" + that.address, true); // 异步请求
+                xhr.send(null);
+            },
+        }
+    })
+</script>
+</html>

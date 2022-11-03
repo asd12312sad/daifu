@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjh.erp.mapper.PopupMapper">
+
+    <resultMap type="com.hjh.erp.domain.Popup" id="PopupResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+        <result property="buttonTitle"    column="button_title"    />
+        <result property="buttonHerf"    column="button_herf"    />
+        <result property="buttonFlag"    column="button_flag"    />
+        <result property="popupFlag"    column="popup_flag"    />
+        <result property="lang"    column="lang"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectPopupVo">
+        select id, title, content, button_title, button_herf, button_flag, popup_flag, lang, create_time from popup
+    </sql>
+
+    <select id="selectPopupById" parameterType="Long" resultMap="PopupResult">
+                    <include refid="selectPopupVo"/>
+            where id = #{id}
+            </select>
+
+    <select id="selectPopupList" parameterType="com.hjh.erp.domain.Popup" resultMap="PopupResult">
+        <include refid="selectPopupVo"/>
+        <where>
+            <if test="popup.title != null  and popup.title != ''"> and title = #{popup.title}</if>
+            <if test="popup.content != null  and popup.content != ''"> and content = #{popup.content}</if>
+            <if test="popup.buttonTitle != null  and popup.buttonTitle != ''"> and button_title = #{popup.buttonTitle}</if>
+            <if test="popup.buttonHerf != null  and popup.buttonHerf != ''"> and button_herf = #{popup.buttonHerf}</if>
+            <if test="popup.buttonFlag != null "> and button_flag = #{popup.buttonFlag}</if>
+            <if test="popup.popupFlag != null "> and popup_flag = #{popup.popupFlag}</if>
+            <if test="popup.lang != null  and popup.lang != ''"> and lang = #{popup.lang}</if>
+        </where>
+    </select>
+
+</mapper>
