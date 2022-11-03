@@ -18,17 +18,7 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>com.github.tronprotocol</groupId>
-            <artifactId>tron-wallet-cli</artifactId>
-            <version>1.2.0</version>
-        </dependency>
 
-        <dependency>
-            <groupId>com.github.tronprotocol</groupId>
-            <artifactId>ron-protobuf</artifactId>
-            <version>1.0</version>
-        </dependency>
 
         <!-- 通用工具-->
         <dependency>
@@ -50,22 +40,6 @@
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
             <version>1.9.0</version>
-        </dependency>
-        <!-- BTC -->
-        <dependency>
-            <groupId>org.bitcoinj</groupId>
-            <artifactId>bitcoinj-core</artifactId>
-            <version>0.14.7</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.squareup.okhttp</groupId>
-                    <artifactId>okhttp</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.protobuf</groupId>
-                    <artifactId>protobuf-java</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.madgag.spongycastle/core -->
         <dependency>

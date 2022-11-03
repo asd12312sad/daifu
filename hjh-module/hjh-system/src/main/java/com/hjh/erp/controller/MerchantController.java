@@ -35,7 +35,6 @@ import com.hjh.common.core.controller.BaseController;
 import com.hjh.common.core.domain.AjaxResult;
 import com.hjh.common.enums.BusinessType;
 import com.hjh.erp.service.IMerchantService;
-import org.tron.common.crypto.ECKey;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;

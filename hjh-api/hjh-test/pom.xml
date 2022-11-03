@@ -45,16 +45,7 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.madgag.spongycastle/core -->
 
-        <dependency>
-            <groupId>com.github.tronprotocol</groupId>
-            <artifactId>ron-protobuf</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.tronprotocol</groupId>
-            <artifactId>tron-wallet-cli</artifactId>
-            <version>4.4.1</version>
-        </dependency>
+
         <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
